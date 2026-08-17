@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://saint-benoit.cm/sitemap.xml
+
+# Disallow admin areas (if any)
+Disallow: /admin/
+Disallow: /.git/
+Disallow: /.vscode/
+
+# Allow important pages
+Allow: /index.html
+Allow: /actualites.html
+Allow: /apropos.html
+Allow: /contact.html
+Allow: /css/
+Allow: /js/
+Allow: /img/

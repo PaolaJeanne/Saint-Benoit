@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Fond -->
+  <rect width="512" height="512" fill="#2c5530" rx="64"/>
+  
+  <!-- Église -->
+  <g fill="#d4af37">
+    <!-- Base de l'église -->
+    <rect x="156" y="280" width="200" height="180" rx="8"/>
+    
+    <!-- Toit principal -->
+    <polygon points="256,180 356,280 156,280"/>
+    
+    <!-- Tour -->
+    <rect x="226" y="200" width="60" height="120" rx="4"/>
+    
+    <!-- Toit de la tour -->
+    <polygon points="256,140 286,200 226,200"/>
+    
+    <!-- Croix -->
+    <rect x="250" y="100" width="12" height="60" rx="2"/>
+    <rect x="238" y="118" width="36" height="12" rx="2"/>
+    
+    <!-- Porte -->
+    <rect x="236" y="380" width="40" height="60" rx="20" fill="#2c5530"/>
+    
+    <!-- Fenêtres -->
+    <circle cx="196" cy="340" r="16" fill="#2c5530"/>
+    <circle cx="316" cy="340" r="16" fill="#2c5530"/>
+    
+    <!-- Fenêtre de la tour -->
+    <rect x="241" y="240" width="30" height="20" rx="4" fill="#2c5530"/>
+  </g>
+  
+  <!-- Texte -->
+  <text x="256" y="480" text-anchor="middle" fill="#d4af37" font-family="serif" font-size="24" font-weight="bold">Saint-Benoît</text>
+</svg>
