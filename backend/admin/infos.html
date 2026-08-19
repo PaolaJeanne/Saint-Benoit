@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infos paroisse — Admin Saint-Benoît</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#1a1a2e;--accent:#c9a227;--accent-dark:#b8941f;--bg:#f4f6f9;--white:#fff;--text:#333;--gray:#666;--border:#e0e0e0;--success:#27ae60;--danger:#e74c3c;--shadow:0 2px 12px rgba(0,0,0,.08)}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    .sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--primary);color:#fff;display:flex;flex-direction:column;z-index:100}
+    .sidebar-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}
+    .sidebar-brand i{font-size:1.5rem;color:var(--accent)}.sidebar-brand span{font-size:1rem;font-weight:700}
+    .sidebar-nav{flex:1;padding:1rem 0}
+    .nav-item a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.5rem;color:rgba(255,255,255,.7);text-decoration:none;transition:all .2s;font-size:.9rem}
+    .nav-item a:hover,.nav-item a.active{background:rgba(201,162,39,.15);color:var(--accent);border-right:3px solid var(--accent)}
+    .nav-item a i{width:18px;text-align:center}
+    .sidebar-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.1)}
+    .btn-logout{width:100%;padding:.6rem;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-logout:hover{background:rgba(231,76,60,.3)}
+    .main{margin-left:240px;padding:2rem}
+    .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+    .page-header h1{font-size:1.5rem;color:var(--primary)}
+    .btn{padding:.65rem 1.25rem;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dark)}
+    .section-card{background:var(--white);border-radius:12px;padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+    .section-card h2{font-size:1rem;font-weight:600;color:var(--primary);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+    .section-card h2 i{color:var(--accent)}
+    .field-row{display:grid;grid-template-columns:200px 1fr;gap:1rem;align-items:start;padding:.75rem 0;border-bottom:1px solid #f0f0f0}
+    .field-row:last-child{border-bottom:none}
+    .field-label{font-size:.82rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.03em;padding-top:.65rem}
+    .field-input input,.field-input textarea{width:100%;padding:.65rem .9rem;border:2px solid var(--border);border-radius:8px;font-size:.9rem;outline:none;transition:border-color .2s;background:var(--white);color:var(--text);font-family:inherit}
+    .field-input input:focus,.field-input textarea:focus{border-color:var(--accent)}
+    .field-input textarea{resize:vertical;min-height:80px}
+    .field-hint{font-size:.75rem;color:var(--gray);margin-top:.3rem}
+    .save-bar{display:flex;justify-content:flex-end;margin-top:.75rem}
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.85rem 1.25rem;border-radius:8px;color:#fff;font-size:.9rem;font-weight:500;z-index:9999;display:flex;align-items:center;gap:.5rem;transform:translateY(80px);opacity:0;transition:all .3s}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:var(--success)}.toast.error{background:var(--danger)}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:1rem}.field-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><i class="fas fa-church"></i><span>Saint-Benoît Admin</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-item"><a href="/admin/"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
+    <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
+    <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
+    <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
+    <div class="nav-item"><a href="/admin/equipe.html"><i class="fas fa-users"></i> Équipe pastorale</a></div>
+    <div class="nav-item"><a href="/admin/mouvements.html"><i class="fas fa-hands-praying"></i> Mouvements</a></div>
+    <div class="nav-item"><a href="/admin/temoignages.html"><i class="fas fa-quote-left"></i> Témoignages</a></div>
+    <div class="nav-item"><a href="/admin/infos.html" class="active"><i class="fas fa-cog"></i> Infos paroisse</a></div>
+    <div class="nav-item" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)"><a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> Voir le site</a></div>
+  </nav>
+  <div class="sidebar-footer"><button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button></div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1><i class="fas fa-cog" style="color:var(--accent)"></i> Informations de la paroisse</h1>
+  </div>
+
+  <!-- Contact -->
+  <form class="section-card" data-groupe="contact" onsubmit="saveGroupe(event,'contact')">
+    <h2><i class="fas fa-phone"></i> Coordonnées de contact</h2>
+    <div class="field-row"><span class="field-label">Adresse</span><div class="field-input"><input type="text" data-cle="adresse" placeholder="PK15 - PK16, Dallas-Nsape"></div></div>
+    <div class="field-row"><span class="field-label">Téléphone principal</span><div class="field-input"><input type="text" data-cle="telephone" placeholder="+237 6 91 06 04 15"></div></div>
+    <div class="field-row"><span class="field-label">Téléphone secondaire</span><div class="field-input"><input type="text" data-cle="telephone2" placeholder="+237 6 52 72 65 52"></div></div>
+    <div class="field-row"><span class="field-label">Email général</span><div class="field-input"><input type="email" data-cle="email" placeholder="contact@saint-benoit.cm"></div></div>
+    <div class="field-row"><span class="field-label">Email mouvements</span><div class="field-input"><input type="email" data-cle="email_mouvements" placeholder="mouvements@saint-benoit.cm"></div></div>
+    <div class="field-row"><span class="field-label">Horaires secrétariat</span><div class="field-input"><input type="text" data-cle="horaires_secretariat" placeholder="Lun-Ven : 8h–12h / 14h–17h"><p class="field-hint">Affiché sur la page Contact</p></div></div>
+    <div class="save-bar"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button></div>
+  </form>
+
+  <!-- Réseaux sociaux -->
+  <form class="section-card" data-groupe="reseaux" onsubmit="saveGroupe(event,'reseaux')">
+    <h2><i class="fas fa-share-alt"></i> Réseaux sociaux</h2>
+    <div class="field-row"><span class="field-label">Facebook</span><div class="field-input"><input type="url" data-cle="facebook" placeholder="https://facebook.com/..."></div></div>
+    <div class="field-row"><span class="field-label">Instagram</span><div class="field-input"><input type="url" data-cle="instagram" placeholder="https://instagram.com/..."></div></div>
+    <div class="field-row"><span class="field-label">YouTube</span><div class="field-input"><input type="url" data-cle="youtube" placeholder="https://youtube.com/..."></div></div>
+    <div class="save-bar"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button></div>
+  </form>
+
+  <!-- Textes -->
+  <form class="section-card" data-groupe="textes" onsubmit="saveGroupe(event,'textes')">
+    <h2><i class="fas fa-font"></i> Textes du site</h2>
+    <div class="field-row"><span class="field-label">Citation hero</span><div class="field-input"><input type="text" data-cle="hero_citation" placeholder='"Venez et vous verrez"'><p class="field-hint">Grande citation sur la page d'accueil</p></div></div>
+    <div class="field-row"><span class="field-label">Sous-titre hero</span><div class="field-input"><textarea data-cle="hero_soustitre" placeholder="Texte sous la citation..."></textarea></div></div>
+    <div class="field-row"><span class="field-label">Histoire (texte principal)</span><div class="field-input"><textarea data-cle="histoire_lead" placeholder="Texte principal de la section Histoire..."></textarea></div></div>
+    <div class="field-row"><span class="field-label">Histoire (texte secondaire)</span><div class="field-input"><textarea data-cle="histoire_texte" placeholder="Paragraphe complémentaire..."></textarea></div></div>
+    <div class="field-row"><span class="field-label">Image histoire</span><div class="field-input"><input type="text" data-cle="histoire_image" placeholder="Ex : OIP.webp"><p class="field-hint">Nom du fichier dans img/</p></div></div>
+    <div class="field-row"><span class="field-label">Description footer</span><div class="field-input"><textarea data-cle="footer_description" placeholder="Texte sous le logo dans le footer..."></textarea></div></div>
+    <div class="field-row"><span class="field-label">Copyright</span><div class="field-input"><input type="text" data-cle="copyright" placeholder="2025 Paroisse Saint-Benoît..."></div></div>
+    <div class="save-bar"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button></div>
+  </form>
+
+  <!-- Localisation -->
+  <form class="section-card" data-groupe="localisation" onsubmit="saveGroupe(event,'localisation')">
+    <h2><i class="fas fa-map-marker-alt"></i> Localisation (carte)</h2>
+    <div class="field-row"><span class="field-label">Latitude</span><div class="field-input"><input type="text" data-cle="carte_lat" placeholder="3.9500"></div></div>
+    <div class="field-row"><span class="field-label">Longitude</span><div class="field-input"><input type="text" data-cle="carte_lng" placeholder="9.7100"></div></div>
+    <div class="field-row"><span class="field-label">Label carte</span><div class="field-input"><input type="text" data-cle="carte_label" placeholder="Paroisse Saint-Benoît, Dallas-Nsape"></div></div>
+    <div class="save-bar"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button></div>
+  </form>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+  fetch('/api/auth/check',{credentials:'include'}).then(r=>r.json()).then(d=>{if(!d.authenticated)window.location.href='/admin/login.html'});
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='/admin/login.html'});
+
+  function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3500)}
+
+  async function loadInfos(){
+    const res=await fetch('/api/infos/all',{credentials:'include'});
+    const rows=await res.json();
+    rows.forEach(row=>{
+      const el=document.querySelector(`[data-cle="${row.cle}"]`);
+      if(el)el.value=row.valeur||'';
+    });
+  }
+
+  async function saveGroupe(e, groupe){
+    e.preventDefault();
+    const form=document.querySelector(`form[data-groupe="${groupe}"]`);
+    const updates={};
+    form.querySelectorAll('[data-cle]').forEach(el=>{ updates[el.dataset.cle]=el.value; });
+    const res=await fetch('/api/infos/batch',{
+      method:'POST',credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(updates)
+    });
+    if(res.ok) showToast('Modifications enregistrées !');
+    else showToast('Erreur lors de la sauvegarde.','error');
+  }
+
+  loadInfos();
+</script>
+</body>
+</html>

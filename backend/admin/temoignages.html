@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Témoignages — Admin Saint-Benoît</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#1a1a2e;--accent:#c9a227;--accent-dark:#b8941f;--bg:#f4f6f9;--white:#fff;--text:#333;--gray:#666;--border:#e0e0e0;--success:#27ae60;--danger:#e74c3c;--shadow:0 2px 12px rgba(0,0,0,.08)}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    .sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--primary);color:#fff;display:flex;flex-direction:column;z-index:100}
+    .sidebar-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}
+    .sidebar-brand i{font-size:1.5rem;color:var(--accent)}.sidebar-brand span{font-size:1rem;font-weight:700}
+    .sidebar-nav{flex:1;padding:1rem 0}
+    .nav-item a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.5rem;color:rgba(255,255,255,.7);text-decoration:none;transition:all .2s;font-size:.9rem}
+    .nav-item a:hover,.nav-item a.active{background:rgba(201,162,39,.15);color:var(--accent);border-right:3px solid var(--accent)}
+    .nav-item a i{width:18px;text-align:center}
+    .sidebar-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.1)}
+    .btn-logout{width:100%;padding:.6rem;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-logout:hover{background:rgba(231,76,60,.3)}
+    .main{margin-left:240px;padding:2rem}
+    .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+    .page-header h1{font-size:1.5rem;color:var(--primary)}
+    .btn{padding:.65rem 1.25rem;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dark)}
+    .btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#c0392b}
+    .btn-secondary{background:#eee;color:var(--text)}.btn-secondary:hover{background:#ddd}
+    .btn-sm{padding:.4rem .8rem;font-size:.8rem}
+    .form-card{background:var(--white);border-radius:12px;padding:1.5rem;box-shadow:var(--shadow);margin-bottom:2rem}
+    .form-card h2{font-size:1rem;font-weight:600;color:var(--primary);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+    .form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+    label{font-size:.82rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.03em}
+    input,textarea{padding:.65rem .9rem;border:2px solid var(--border);border-radius:8px;font-size:.9rem;outline:none;transition:border-color .2s;background:var(--white);color:var(--text);font-family:inherit}
+    input:focus,textarea:focus{border-color:var(--accent)}
+    textarea{resize:vertical;min-height:100px}
+    .form-actions{display:flex;gap:.75rem;justify-content:flex-end}
+    .temo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+    .temo-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);padding:1.5rem;display:flex;flex-direction:column;gap:.75rem}
+    .temo-quote{font-size:.9rem;color:var(--text);line-height:1.7;font-style:italic;position:relative;padding-left:1.25rem}
+    .temo-quote::before{content:'"';position:absolute;left:0;top:-.25rem;font-size:2rem;color:var(--accent);font-style:normal;line-height:1}
+    .temo-author{font-size:.82rem;font-weight:600;color:var(--primary)}
+    .temo-mvt{font-size:.75rem;color:var(--accent)}
+    .temo-actions{display:flex;gap:.5rem;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border)}
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.85rem 1.25rem;border-radius:8px;color:#fff;font-size:.9rem;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:var(--success)}.toast.error{background:var(--danger)}
+    .empty-state{padding:3rem;text-align:center;color:var(--gray)}
+    .empty-state i{font-size:2.5rem;margin-bottom:.75rem;opacity:.4;display:block}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+    .section-header h2{font-size:1rem;font-weight:600;color:var(--primary)}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:1rem}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><i class="fas fa-church"></i><span>Saint-Benoît Admin</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-item"><a href="/admin/"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
+    <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
+    <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
+    <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
+    <div class="nav-item"><a href="/admin/equipe.html"><i class="fas fa-users"></i> Équipe pastorale</a></div>
+    <div class="nav-item"><a href="/admin/mouvements.html"><i class="fas fa-hands-praying"></i> Mouvements</a></div>
+    <div class="nav-item"><a href="/admin/temoignages.html" class="active"><i class="fas fa-quote-left"></i> Témoignages</a></div>
+    <div class="nav-item"><a href="/admin/infos.html"><i class="fas fa-cog"></i> Infos paroisse</a></div>
+    <div class="nav-item" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)"><a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> Voir le site</a></div>
+  </nav>
+  <div class="sidebar-footer"><button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button></div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1><i class="fas fa-quote-left" style="color:var(--accent)"></i> Témoignages</h1>
+    <button class="btn btn-primary" id="showFormBtn"><i class="fas fa-plus"></i> Nouveau témoignage</button>
+  </div>
+
+  <div class="form-card" id="formCard" style="display:none">
+    <h2 id="formTitle">Nouveau témoignage</h2>
+    <form id="temoForm">
+      <input type="hidden" id="editId">
+      <div class="form-group"><label>Témoignage *</label><textarea id="texte" required placeholder="Le témoignage complet..."></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group"><label>Auteur *</label><input type="text" id="auteur" required placeholder="Ex : Marie, 20 ans"></div>
+        <div class="form-group"><label>Mouvement concerné</label><input type="text" id="mouvement" placeholder="Ex : Mouvement Jeune"></div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="section-header">
+    <h2>Témoignages publiés</h2>
+    <span id="count" style="font-size:.85rem;color:var(--gray)"></span>
+  </div>
+  <div class="temo-grid" id="temoGrid">
+    <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+  fetch('/api/auth/check',{credentials:'include'}).then(r=>r.json()).then(d=>{if(!d.authenticated)window.location.href='/admin/login.html'});
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='/admin/login.html'});
+  function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3500)}
+  let temos=[];
+  async function load(){const res=await fetch('/api/temoignages',{credentials:'include'});temos=await res.json();render()}
+  function render(){
+    const g=document.getElementById('temoGrid');
+    document.getElementById('count').textContent=`${temos.length} témoignage(s)`;
+    if(!temos.length){g.innerHTML='<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-quote-left"></i><p>Aucun témoignage. Ajoutez le premier !</p></div>';return}
+    g.innerHTML=temos.map(t=>`
+      <div class="temo-card">
+        <p class="temo-quote">${t.texte}</p>
+        <div><p class="temo-author">— ${t.auteur}</p>${t.mouvement?`<p class="temo-mvt">${t.mouvement}</p>`:''}</div>
+        <div class="temo-actions">
+          <button class="btn btn-secondary btn-sm" onclick="edit(${t.id})"><i class="fas fa-edit"></i> Modifier</button>
+          <button class="btn btn-danger btn-sm" onclick="del(${t.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('showFormBtn').addEventListener('click',()=>{reset();document.getElementById('formCard').style.display='block';document.getElementById('formCard').scrollIntoView({behavior:'smooth'})});
+  document.getElementById('cancelBtn').addEventListener('click',()=>{document.getElementById('formCard').style.display='none';reset()});
+  function reset(){document.getElementById('temoForm').reset();document.getElementById('editId').value='';document.getElementById('formTitle').textContent='Nouveau témoignage'}
+  function edit(id){
+    const t=temos.find(x=>x.id===id);if(!t)return;
+    document.getElementById('editId').value=t.id;
+    document.getElementById('texte').value=t.texte;
+    document.getElementById('auteur').value=t.auteur;
+    document.getElementById('mouvement').value=t.mouvement||'';
+    document.getElementById('formTitle').textContent='Modifier le témoignage';
+    document.getElementById('formCard').style.display='block';
+    document.getElementById('formCard').scrollIntoView({behavior:'smooth'});
+  }
+  async function del(id){
+    if(!confirm('Supprimer ce témoignage ?'))return;
+    const res=await fetch(`/api/temoignages/${id}`,{method:'DELETE',credentials:'include'});
+    if(res.ok){showToast('Témoignage supprimé.');load()}else showToast('Erreur.','error');
+  }
+  document.getElementById('temoForm').addEventListener('submit',async function(e){
+    e.preventDefault();
+    const id=document.getElementById('editId').value;
+    const payload={texte:document.getElementById('texte').value,auteur:document.getElementById('auteur').value,mouvement:document.getElementById('mouvement').value};
+    const res=await fetch(id?`/api/temoignages/${id}`:'/api/temoignages',{method:id?'PUT':'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok){showToast(id?'Témoignage mis à jour !':'Témoignage ajouté !');document.getElementById('formCard').style.display='none';reset();load()}
+    else showToast('Erreur.','error');
+  });
+  load();
+</script>
+</body>
+</html>

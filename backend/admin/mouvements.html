@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mouvements — Admin Saint-Benoît</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#1a1a2e;--accent:#c9a227;--accent-dark:#b8941f;--bg:#f4f6f9;--white:#fff;--text:#333;--gray:#666;--border:#e0e0e0;--success:#27ae60;--danger:#e74c3c;--shadow:0 2px 12px rgba(0,0,0,.08)}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    .sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--primary);color:#fff;display:flex;flex-direction:column;z-index:100}
+    .sidebar-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}
+    .sidebar-brand i{font-size:1.5rem;color:var(--accent)}.sidebar-brand span{font-size:1rem;font-weight:700}
+    .sidebar-nav{flex:1;padding:1rem 0}
+    .nav-item a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.5rem;color:rgba(255,255,255,.7);text-decoration:none;transition:all .2s;font-size:.9rem}
+    .nav-item a:hover,.nav-item a.active{background:rgba(201,162,39,.15);color:var(--accent);border-right:3px solid var(--accent)}
+    .nav-item a i{width:18px;text-align:center}
+    .sidebar-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.1)}
+    .btn-logout{width:100%;padding:.6rem;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:background .2s}
+    .btn-logout:hover{background:rgba(231,76,60,.3)}
+    .main{margin-left:240px;padding:2rem}
+    .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+    .page-header h1{font-size:1.5rem;color:var(--primary)}
+    .btn{padding:.65rem 1.25rem;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dark)}
+    .btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#c0392b}
+    .btn-secondary{background:#eee;color:var(--text)}.btn-secondary:hover{background:#ddd}
+    .btn-sm{padding:.4rem .8rem;font-size:.8rem}
+    .form-card{background:var(--white);border-radius:12px;padding:1.5rem;box-shadow:var(--shadow);margin-bottom:2rem}
+    .form-card h2{font-size:1rem;font-weight:600;color:var(--primary);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+    label{font-size:.82rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.03em}
+    input,select,textarea{padding:.65rem .9rem;border:2px solid var(--border);border-radius:8px;font-size:.9rem;outline:none;transition:border-color .2s;background:var(--white);color:var(--text);font-family:inherit}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+    textarea{resize:vertical;min-height:80px}
+    .form-actions{display:flex;gap:.75rem;justify-content:flex-end}
+    .tab-bar{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+    .tab-btn{padding:.5rem 1rem;border-radius:20px;border:2px solid var(--border);background:var(--white);cursor:pointer;font-size:.85rem;font-weight:500;transition:all .2s}
+    .tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .mvt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+    .mvt-card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);padding:1.25rem;display:flex;flex-direction:column;gap:.6rem}
+    .mvt-icon-row{display:flex;align-items:center;gap:.75rem}
+    .mvt-icon{width:44px;height:44px;border-radius:10px;background:rgba(201,162,39,.12);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .mvt-card h3{font-size:.95rem;font-weight:600}
+    .mvt-age{font-size:.78rem;color:var(--accent);font-weight:600}
+    .mvt-desc{font-size:.82rem;color:var(--gray);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .mvt-meta{font-size:.78rem;color:var(--gray);display:flex;align-items:center;gap:.35rem}
+    .badge{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:600}
+    .badge-jeunes{background:rgba(52,152,219,.15);color:#2980b9}
+    .badge-adultes{background:rgba(26,26,46,.1);color:var(--primary)}
+    .badge-chorales{background:rgba(201,162,39,.15);color:var(--accent)}
+    .mvt-actions{display:flex;gap:.5rem;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border)}
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.85rem 1.25rem;border-radius:8px;color:#fff;font-size:.9rem;font-weight:500;z-index:9999;display:flex;align-items:center;gap:.5rem;transform:translateY(80px);opacity:0;transition:all .3s}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:var(--success)}.toast.error{background:var(--danger)}
+    .empty-state{padding:3rem;text-align:center;color:var(--gray)}
+    .empty-state i{font-size:2.5rem;margin-bottom:.75rem;opacity:.4;display:block}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+    .section-header h2{font-size:1rem;font-weight:600;color:var(--primary)}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:1rem}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><i class="fas fa-church"></i><span>Saint-Benoît Admin</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-item"><a href="/admin/"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
+    <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
+    <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
+    <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
+    <div class="nav-item"><a href="/admin/equipe.html"><i class="fas fa-users"></i> Équipe pastorale</a></div>
+    <div class="nav-item"><a href="/admin/mouvements.html" class="active"><i class="fas fa-hands-praying"></i> Mouvements</a></div>
+    <div class="nav-item"><a href="/admin/temoignages.html"><i class="fas fa-quote-left"></i> Témoignages</a></div>
+    <div class="nav-item"><a href="/admin/infos.html"><i class="fas fa-cog"></i> Infos paroisse</a></div>
+    <div class="nav-item" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)"><a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> Voir le site</a></div>
+  </nav>
+  <div class="sidebar-footer"><button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button></div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1><i class="fas fa-hands-praying" style="color:var(--accent)"></i> Mouvements &amp; Groupes</h1>
+    <button class="btn btn-primary" id="showFormBtn"><i class="fas fa-plus"></i> Nouveau mouvement</button>
+  </div>
+
+  <div class="form-card" id="formCard" style="display:none">
+    <h2 id="formTitle">Nouveau mouvement</h2>
+    <form id="mvtForm">
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="form-group"><label>Nom *</label><input type="text" id="nom" required placeholder="Nom du mouvement"></div>
+        <div class="form-group"><label>Catégorie</label>
+          <select id="categorie">
+            <option value="jeunes">Mouvements des Jeunes</option>
+            <option value="adultes">Mouvements des Adultes</option>
+            <option value="chorales">Chorales</option>
+            <option value="services">Services liturgiques</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Tranche d'âge</label><input type="text" id="tranche_age" placeholder="Ex : 16-35 ans"></div>
+        <div class="form-group"><label>Icône Font Awesome</label><input type="text" id="icone" placeholder="Ex : fa-users"></div>
+        <div class="form-group"><label>Horaire</label><input type="text" id="horaire" placeholder="Ex : Samedi - 15h00"></div>
+        <div class="form-group"><label>Lieu</label><input type="text" id="lieu" placeholder="Ex : Salle paroissiale"></div>
+        <div class="form-group"><label>Responsable</label><input type="text" id="responsable" placeholder="Nom du responsable"></div>
+        <div class="form-group"><label>Ordre d'affichage</label><input type="number" id="ordre" value="0" min="0"></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="description" placeholder="Décrivez ce mouvement..."></textarea></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-cat="all">Tous</button>
+    <button class="tab-btn" data-cat="jeunes">Jeunes</button>
+    <button class="tab-btn" data-cat="adultes">Adultes</button>
+    <button class="tab-btn" data-cat="chorales">Chorales</button>
+    <button class="tab-btn" data-cat="services">Services</button>
+  </div>
+  <div class="section-header">
+    <h2>Liste des mouvements</h2>
+    <span id="count" style="font-size:.85rem;color:var(--gray)"></span>
+  </div>
+  <div class="mvt-grid" id="mvtGrid">
+    <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+  fetch('/api/auth/check',{credentials:'include'}).then(r=>r.json()).then(d=>{if(!d.authenticated)window.location.href='/admin/login.html'});
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='/admin/login.html'});
+
+  function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3500)}
+
+  let mouvements=[];let currentCat='all';
+
+  const CAT_LABELS={'jeunes':'Jeunes','adultes':'Adultes','chorales':'Chorales','services':'Services'};
+  const CAT_BADGES={'jeunes':'badge-jeunes','adultes':'badge-adultes','chorales':'badge-chorales','services':'badge-adultes'};
+
+  async function load(){
+    const res=await fetch('/api/mouvements',{credentials:'include'});
+    mouvements=await res.json();
+    render();
+  }
+
+  function render(){
+    const list=currentCat==='all'?mouvements:mouvements.filter(m=>m.categorie===currentCat);
+    document.getElementById('count').textContent=`${list.length} mouvement(s)`;
+    const g=document.getElementById('mvtGrid');
+    if(!list.length){g.innerHTML='<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-hands-praying"></i><p>Aucun mouvement dans cette catégorie.</p></div>';return}
+    g.innerHTML=list.map(m=>`
+      <div class="mvt-card">
+        <div class="mvt-icon-row">
+          <div class="mvt-icon"><i class="fas ${m.icone||'fa-users'}"></i></div>
+          <div><h3>${m.nom}</h3><span class="badge ${CAT_BADGES[m.categorie]||'badge-adultes'}">${CAT_LABELS[m.categorie]||m.categorie}</span></div>
+        </div>
+        ${m.tranche_age?`<p class="mvt-age">${m.tranche_age}</p>`:''}
+        ${m.description?`<p class="mvt-desc">${m.description}</p>`:''}
+        ${m.horaire?`<p class="mvt-meta"><i class="fas fa-clock"></i> ${m.horaire}</p>`:''}
+        ${m.lieu?`<p class="mvt-meta"><i class="fas fa-map-marker-alt"></i> ${m.lieu}</p>`:''}
+        ${m.responsable?`<p class="mvt-meta"><i class="fas fa-user"></i> ${m.responsable}</p>`:''}
+        <div class="mvt-actions">
+          <button class="btn btn-secondary btn-sm" onclick="edit(${m.id})"><i class="fas fa-edit"></i> Modifier</button>
+          <button class="btn btn-danger btn-sm" onclick="del(${m.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`).join('');
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');currentCat=this.dataset.cat;render();
+    });
+  });
+
+  document.getElementById('showFormBtn').addEventListener('click',()=>{reset();document.getElementById('formCard').style.display='block';document.getElementById('formCard').scrollIntoView({behavior:'smooth'})});
+  document.getElementById('cancelBtn').addEventListener('click',()=>{document.getElementById('formCard').style.display='none';reset()});
+
+  function reset(){document.getElementById('mvtForm').reset();document.getElementById('editId').value='';document.getElementById('formTitle').textContent='Nouveau mouvement';document.getElementById('icone').value='fa-users';document.getElementById('ordre').value=0}
+
+  function edit(id){
+    const m=mouvements.find(x=>x.id===id);if(!m)return;
+    document.getElementById('editId').value=m.id;
+    ['nom','categorie','tranche_age','icone','horaire','lieu','responsable','ordre','description'].forEach(f=>{
+      const el=document.getElementById(f);if(el)el.value=m[f]||'';
+    });
+    document.getElementById('formTitle').textContent='Modifier le mouvement';
+    document.getElementById('formCard').style.display='block';
+    document.getElementById('formCard').scrollIntoView({behavior:'smooth'});
+  }
+
+  async function del(id){
+    if(!confirm('Supprimer ce mouvement ?'))return;
+    const res=await fetch(`/api/mouvements/${id}`,{method:'DELETE',credentials:'include'});
+    if(res.ok){showToast('Mouvement supprimé.');load()}else showToast('Erreur.','error');
+  }
+
+  document.getElementById('mvtForm').addEventListener('submit',async function(e){
+    e.preventDefault();
+    const id=document.getElementById('editId').value;
+    const payload={
+      nom:document.getElementById('nom').value,
+      categorie:document.getElementById('categorie').value,
+      tranche_age:document.getElementById('tranche_age').value,
+      icone:document.getElementById('icone').value||'fa-users',
+      horaire:document.getElementById('horaire').value,
+      lieu:document.getElementById('lieu').value,
+      responsable:document.getElementById('responsable').value,
+      ordre:parseInt(document.getElementById('ordre').value)||0,
+      description:document.getElementById('description').value
+    };
+    const res=await fetch(id?`/api/mouvements/${id}`:'/api/mouvements',{method:id?'PUT':'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok){showToast(id?'Mouvement mis à jour !':'Mouvement créé !');document.getElementById('formCard').style.display='none';reset();load()}
+    else showToast('Erreur.','error');
+  });
+
+  load();
+</script>
+</body>
+</html>

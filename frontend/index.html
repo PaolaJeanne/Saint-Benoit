@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paroisse Saint-Benoît - Accueil</title>
+    <meta name="description" content="Bienvenue à la Paroisse Saint-Benoît. Découvrez nos messes, activités et la vie de notre communauté chrétienne.">
+    
+    <!-- CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    
+    <!-- Meta tags pour réseaux sociaux -->
+    <meta property="og:title" content="Paroisse Saint-Benoît - Accueil">
+    <meta property="og:description" content="Bienvenue à la Paroisse Saint-Benoît. Découvrez nos messes, activités et la vie de notre communauté chrétienne.">
+    <meta property="og:image" content="img/og-image.jpg">
+    <meta property="og:url" content="https://saint-benoit.cm">
+    <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Paroisse Saint-Benoît - Accueil">
+    <meta name="twitter:description" content="Bienvenue à la Paroisse Saint-Benoît. Découvrez nos messes, activités et la vie de notre communauté chrétienne.">
+    <meta name="twitter:image" content="img/og-image.jpg">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://saint-benoit.cm/index.html">
+    
+    <!-- Données structurées JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Church",
+      "name": "Paroisse Saint-Benoît",
+      "alternateName": "Église Saint-Benoît Dallas-Nsape",
+      "url": "https://saint-benoit.cm",
+      "logo": "https://saint-benoit.cm/img/icon-192.png",
+      "image": "https://saint-benoit.cm/img/og-image.jpg",
+      "description": "La Paroisse Saint-Benoît, fondée en 2017, rassemble la communauté chrétienne de Dallas-Nsape dans un esprit de foi, de communion et d'espérance.",
+      "foundingDate": "2017",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "PK15 - PK16, Dallas-Nsape",
+        "addressLocality": "Douala",
+        "addressCountry": "CM"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 3.9500,
+        "longitude": 9.7100
+      },
+      "telephone": "+237691060415",
+      "email": "contact@saint-benoit.cm",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+          "opens": "08:00",
+          "closes": "17:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "08:00",
+          "closes": "12:00"
+        }
+      ],
+      "sameAs": [
+        "https://facebook.com/paroisse.saintbenoit.dallas",
+        "https://instagram.com/saintbenoit_dallas",
+        "https://youtube.com/@paroissesaintbenoit"
+      ]
+    }
+    </script>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo" aria-label="Paroisse Saint-Benoît - Accueil">
+                    <i class="fas fa-church" aria-hidden="true"></i>
+                    <span class="logo-text">Saint-Benoît</span>
+                </a>
+                
+                <nav aria-label="Navigation principale">
+                    <ul class="nav-menu">
+                        <li><a href="index.html" class="active">Accueil</a></li>
+                        <li><a href="actualites.html">Actualités</a></li>
+                        <li><a href="mouvements.html">Mouvements</a></li>
+                        <li><a href="apropos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                    <button class="menu-toggle" aria-label="Menu de navigation">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content" id="hero-dynamic">
+                <h2 class="hero-citation">"Venez et vous verrez"</h2>
+                <p class="hero-soustitre">La Paroisse Saint-Benoît vous accueille dans la joie et la paix du Christ. Rejoignez notre communauté de foi, d'espérance et de charité.</p>
+                <div class="hero-buttons">
+                    <a href="#messes" class="btn">Horaires des messes</a>
+                    <a href="contact.html" class="btn btn-outline">Nous contacter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HORAIRES DES MESSES -->
+    <section class="section bg-white" id="messes">
+        <div class="container">
+            <h2 class="section-title">Horaires des Messes</h2>
+            <p class="section-subtitle">Rejoignez-nous pour célébrer ensemble la foi chrétienne</p>
+            
+            <!-- Horaires chargés dynamiquement depuis l'API /api/messes -->
+            <div class="messes-grid" id="messes-dynamic">
+                <!-- Contenu de secours affiché si l'API est indisponible -->
+                <div class="messe-card">
+                    <div class="card-icon"><i class="fas fa-calendar-week"></i></div>
+                    <div>
+                        <h3>Lundi - Vendredi</h3>
+                        <div class="messe-time"><span>Messe</span></div>
+                    </div>
+                    <span class="messe-heure-badge">06h15</span>
+                </div>
+                <div class="messe-card">
+                    <div class="card-icon"><i class="fas fa-moon"></i></div>
+                    <div>
+                        <h3>Samedi</h3>
+                        <div class="messe-time"><span>Messe</span></div>
+                    </div>
+                    <span class="messe-heure-badge">06h30</span>
+                </div>
+                <div class="messe-card">
+                    <div class="card-icon"><i class="fas fa-sun"></i></div>
+                    <div>
+                        <h3>Dimanche</h3>
+                        <div class="messe-times-list">
+                            <div class="messe-time"><span>Messe</span><strong>06h30</strong></div>
+                            <div class="messe-time"><span>Messe des jeunes</span><strong>10h00</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-2 info-card">
+                <p class="mb-0"><i class="fas fa-info-circle info-icon"></i> 
+                Les horaires peuvent être modifiés lors des fêtes liturgiques. Consultez nos actualités pour plus d'informations.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Nos Services</h2>
+            <p class="section-subtitle">Découvrez les différents services et activités de notre paroisse</p>
+            
+            <!-- Services chargés dynamiquement depuis /api/services -->
+            <div class="cards-grid services-grid" id="services-dynamic">
+                <div class="card">
+                    <i class="fas fa-hands-praying card-icon"></i>
+                    <h3>Sacrements</h3>
+                    <p>Baptême, Confirmation, Mariage, Réconciliation... Nous vous accompagnons dans votre cheminement spirituel.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-graduation-cap card-icon"></i>
+                    <h3>Catéchèse</h3>
+                    <p>Formation chrétienne pour tous les âges : enfants, jeunes et adultes. Approfondissez votre foi.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-music card-icon"></i>
+                    <h3>Chorales</h3>
+                    <p>Rejoignez nos chorales paroissiales et participez à la beauté des célébrations liturgiques.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-heart card-icon"></i>
+                    <h3>Solidarité</h3>
+                    <p>Actions caritatives et soutien aux plus démunis. Ensemble, construisons un monde plus juste.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCHAINS ÉVÉNEMENTS -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Prochains Événements</h2>
+            <p class="section-subtitle">Ne manquez pas les temps forts et temps liturgiques de notre communauté</p>
+            
+            <!-- Événements chargés dynamiquement depuis l'API /api/evenements -->
+            <div class="events-grid" id="evenements-dynamic">
+                <!-- Contenu de secours -->
+                <div class="event-card">
+                    <div class="event-date">
+                        <span class="day">CAR</span>
+                        <span class="month">ÊME</span>
+                    </div>
+                    <div class="event-content">
+                        <h3>Temps du Carême</h3>
+                        <p><i class="fas fa-clock"></i> 40 jours de préparation</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Église paroissiale</p>
+                        <p>Chemin de croix chaque vendredi, prière, jeûne et partage</p>
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="event-date">
+                        <span class="day">PÂ</span>
+                        <span class="month">QUES</span>
+                    </div>
+                    <div class="event-content">
+                        <h3>Semaine Sainte & Pâques</h3>
+                        <p><i class="fas fa-clock"></i> Triduum Pascal</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Église paroissiale</p>
+                        <p>Cène du Seigneur, Passion, Veillée Pascale et Résurrection</p>
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="event-date">
+                        <span class="day">11</span>
+                        <span class="month">JUIL</span>
+                    </div>
+                    <div class="event-content">
+                        <h3>Fête Patronale Saint-Benoît</h3>
+                        <p><i class="fas fa-clock"></i> Messe solennelle</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Paroisse Saint-Benoît</p>
+                        <p>Grande célébration de la fête de notre saint patron</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTUALITÉS -->
+    <section class="section bg-white">
+        <div class="container">
+            <h2 class="section-title">Dernières Actualités</h2>
+            <p class="section-subtitle">Restez informés de la vie de notre communauté</p>
+            
+            <!-- Actualités chargées dynamiquement depuis l'API /api/actualites -->
+            <div class="news-grid" id="actualites-dynamic">
+                <!-- Contenu de secours -->
+                <div class="news-card">
+                    <img src="img/Paque.jpg" alt="Programme de la Semaine Sainte" width="400" height="220" loading="lazy">
+                    <div class="news-content">
+                        <span class="news-category">Vie paroissiale</span>
+                        <h3>Programme de la Semaine Sainte</h3>
+                        <p>Découvrez le déroulement complet de nos célébrations, des Rameaux jusqu'à la Résurrection.</p>
+                        <a href="actualites.html" class="read-more">Lire la suite →</a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <img src="img/grotte-mariale.jpg" alt="Projets de construction de la paroisse Saint-Benoît" width="400" height="220" loading="lazy">
+                    <div class="news-content">
+                        <span class="news-category">Projets</span>
+                        <h3>Nos projets de construction avancent</h3>
+                        <p>Construction de la Grotte Mariale et nouveau Presbytère : l'état des travaux et comment contribuer.</p>
+                        <a href="actualites.html" class="read-more">Lire la suite →</a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <img src="img/reparation-autel.jpeg" alt="Cérémonie de réparation à la paroisse Saint-Benoît" width="400" height="220" loading="lazy">
+                    <div class="news-content">
+                        <span class="news-category">Vie paroissiale</span>
+                        <h3>Cérémonie de réparation</h3>
+                        <p>Retour sur la célébration présidée par le Vicaire Général pour réaffirmer la paix et la sainteté de notre autel.</p>
+                        <a href="actualites.html" class="read-more">Lire la suite →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-2">
+                <a href="actualites.html" class="btn">Voir toutes les actualités</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Paroisse Saint-Benoît</h3>
+                    <p class="footer-description">Une communauté vivante de foi, d'espérance et de charité au service de tous.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/paroisse.saintbenoit.dallas" class="social-facebook" aria-label="Page Facebook de la paroisse">
+                            <i class="fab fa-facebook-f"></i><span class="sr-only">Facebook</span>
+                        </a>
+                        <a href="https://instagram.com/saintbenoit_dallas" class="social-instagram" aria-label="Compte Instagram de la paroisse">
+                            <i class="fab fa-instagram"></i><span class="sr-only">Instagram</span>
+                        </a>
+                        <a href="https://youtube.com/@paroissesaintbenoit" class="social-youtube" aria-label="Chaîne YouTube de la paroisse">
+                            <i class="fab fa-youtube"></i><span class="sr-only">YouTube</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span class="footer-adresse">PK15 - PK16, Dallas-Nsape</span></p>
+                    <p><i class="fas fa-phone"></i> <span class="footer-telephone">+237 6 91 06 04 15</span></p>
+                    <p><i class="fas fa-envelope"></i> <span class="footer-email">contact@saint-benoit.cm</span></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Liens rapides</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="actualites.html">Actualités</a></li>
+                        <li><a href="mouvements.html">Mouvements</a></li>
+                        <li><a href="apropos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Newsletter</h3>
+                    <p>Recevez nos actualités par email</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Votre email" required>
+                        <button type="submit">S'inscrire</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p class="footer-copyright">&copy; 2025 Paroisse Saint-Benoît. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="js/script.js"></script>
+    
+    <!-- Service Worker pour PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker enregistré avec succès:', registration.scope);
+                    }, function(err) {
+                        console.log('Échec de l\'enregistrement du Service Worker:', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

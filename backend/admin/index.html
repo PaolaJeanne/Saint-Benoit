@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord — Admin Saint-Benoît</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#1a1a2e;--accent:#c9a227;--accent-dark:#b8941f;--bg:#f4f6f9;--white:#fff;--text:#333;--gray:#666;--border:#e0e0e0;--success:#27ae60;--danger:#e74c3c;--shadow:0 2px 12px rgba(0,0,0,.08)}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+    .sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--primary);color:#fff;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+    .sidebar-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+    .sidebar-brand i{font-size:1.5rem;color:var(--accent)}.sidebar-brand span{font-size:1rem;font-weight:700}
+    .sidebar-nav{flex:1;padding:1rem 0}
+    .nav-section{padding:.5rem 1.5rem .25rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-top:.5rem}
+    .nav-item a{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.5rem;color:rgba(255,255,255,.7);text-decoration:none;transition:all .2s;font-size:.875rem}
+    .nav-item a:hover,.nav-item a.active{background:rgba(201,162,39,.15);color:var(--accent);border-right:3px solid var(--accent)}
+    .nav-item a i{width:16px;text-align:center;font-size:.85rem}
+    .sidebar-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.1);flex-shrink:0}
+    .btn-logout{width:100%;padding:.6rem;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:background .2s}
+    .btn-logout:hover{background:rgba(231,76,60,.3)}
+    .main{margin-left:240px;padding:2rem;min-height:100vh}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+    .topbar h1{font-size:1.5rem;color:var(--primary)}
+    .topbar-right{display:flex;align-items:center;gap:1rem}
+    .badge-online{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--success)}
+    .badge-online::before{content:'';width:8px;height:8px;background:var(--success);border-radius:50%;display:inline-block}
+    .view-site-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:500;transition:background .2s}
+    .view-site-btn:hover{background:var(--accent-dark)}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+    .stat-card{background:var(--white);border-radius:12px;padding:1.25rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:.875rem}
+    .stat-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .stat-icon.gold{background:rgba(201,162,39,.15);color:var(--accent)}
+    .stat-icon.blue{background:rgba(26,26,46,.1);color:var(--primary)}
+    .stat-icon.green{background:rgba(39,174,96,.15);color:var(--success)}
+    .stat-icon.purple{background:rgba(155,89,182,.15);color:#8e44ad}
+    .stat-icon.orange{background:rgba(230,126,34,.15);color:#e67e22}
+    .stat-info span{font-size:.75rem;color:var(--gray);display:block}
+    .stat-info strong{font-size:1.6rem;font-weight:700;color:var(--primary)}
+    .section-title{font-size:1rem;font-weight:600;color:var(--primary);margin-bottom:1rem}
+    .actions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:2rem}
+    .action-card{background:var(--white);border-radius:12px;padding:1.25rem;box-shadow:var(--shadow);text-decoration:none;color:var(--text);transition:transform .2s,box-shadow .2s;display:block}
+    .action-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+    .action-card .card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+    .action-card .card-header i{width:38px;height:38px;background:rgba(201,162,39,.12);color:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+    .action-card h3{font-size:.9rem;font-weight:600}
+    .action-card p{font-size:.8rem;color:var(--gray);line-height:1.5}
+    .action-card .arrow{margin-top:.75rem;color:var(--accent);font-size:.8rem;font-weight:500}
+    .recent-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .card{background:var(--white);border-radius:12px;padding:1.25rem;box-shadow:var(--shadow)}
+    .list-item{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--border)}
+    .list-item:last-child{border-bottom:none}
+    .list-item-left{display:flex;align-items:center;gap:.65rem}
+    .list-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+    .list-item-name{font-size:.875rem;font-weight:500}
+    .list-item-sub{font-size:.75rem;color:var(--gray)}
+    .badge{font-size:.72rem;padding:.2rem .55rem;border-radius:20px;font-weight:500}
+    .badge-gold{background:rgba(201,162,39,.15);color:var(--accent)}
+    .badge-blue{background:rgba(26,26,46,.1);color:var(--primary)}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:1rem}.recent-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><i class="fas fa-church"></i><span>Saint-Benoît Admin</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-item"><a href="/admin/" class="active"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
+    <div class="nav-section">Liturgie</div>
+    <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
+    <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
+    <div class="nav-section">Contenu</div>
+    <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
+    <div class="nav-item"><a href="/admin/mouvements.html"><i class="fas fa-hands-praying"></i> Mouvements</a></div>
+    <div class="nav-item"><a href="/admin/temoignages.html"><i class="fas fa-quote-left"></i> Témoignages</a></div>
+    <div class="nav-section">Paroisse</div>
+    <div class="nav-item"><a href="/admin/equipe.html"><i class="fas fa-users"></i> Équipe pastorale</a></div>
+    <div class="nav-item"><a href="/admin/infos.html"><i class="fas fa-cog"></i> Infos &amp; Contact</a></div>
+    <div class="nav-item" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)">
+      <a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> Voir le site</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer"><button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button></div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h1>Tableau de bord</h1>
+    <div class="topbar-right">
+      <span class="badge-online">Serveur actif</span>
+      <a href="/" target="_blank" class="view-site-btn"><i class="fas fa-globe"></i> Site public</a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-clock"></i></div><div class="stat-info"><span>Messes</span><strong id="countMesses">—</strong></div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-newspaper"></i></div><div class="stat-info"><span>Actualités</span><strong id="countActualites">—</strong></div></div>
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><span>Événements</span><strong id="countEvenements">—</strong></div></div>
+    <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-hands-praying"></i></div><div class="stat-info"><span>Mouvements</span><strong id="countMouvements">—</strong></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-users"></i></div><div class="stat-info"><span>Équipe</span><strong id="countEquipe">—</strong></div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-quote-left"></i></div><div class="stat-info"><span>Témoignages</span><strong id="countTemos">—</strong></div></div>
+  </div>
+
+  <p class="section-title">Accès rapide</p>
+  <div class="actions-grid">
+    <a href="/admin/messes.html" class="action-card"><div class="card-header"><i class="fas fa-clock"></i><h3>Horaires des messes</h3></div><p>Modifiez les jours, heures et types de messes.</p><div class="arrow">Accéder →</div></a>
+    <a href="/admin/actualites.html" class="action-card"><div class="card-header"><i class="fas fa-newspaper"></i><h3>Actualités</h3></div><p>Publiez et modifiez les articles de la communauté.</p><div class="arrow">Accéder →</div></a>
+    <a href="/admin/evenements.html" class="action-card"><div class="card-header"><i class="fas fa-calendar-alt"></i><h3>Événements</h3></div><p>Gérez le calendrier liturgique et les temps forts.</p><div class="arrow">Accéder →</div></a>
+    <a href="/admin/mouvements.html" class="action-card"><div class="card-header"><i class="fas fa-hands-praying"></i><h3>Mouvements</h3></div><p>Mettez à jour les groupes, chorales et services.</p><div class="arrow">Accéder →</div></a>
+    <a href="/admin/equipe.html" class="action-card"><div class="card-header"><i class="fas fa-users"></i><h3>Équipe pastorale</h3></div><p>Gérez les prêtres et membres de l'équipe.</p><div class="arrow">Accéder →</div></a>
+    <a href="/admin/infos.html" class="action-card"><div class="card-header"><i class="fas fa-cog"></i><h3>Infos &amp; Contact</h3></div><p>Coordonnées, réseaux sociaux, textes du site.</p><div class="arrow">Accéder →</div></a>
+  </div>
+
+  <div class="recent-grid">
+    <div class="card">
+      <p class="section-title"><i class="fas fa-clock" style="color:var(--accent)"></i> Messes</p>
+      <div id="messesList"><p style="color:var(--gray);font-size:.875rem">Chargement...</p></div>
+    </div>
+    <div class="card">
+      <p class="section-title"><i class="fas fa-newspaper" style="color:var(--accent)"></i> Dernières actualités</p>
+      <div id="actualitesList"><p style="color:var(--gray);font-size:.875rem">Chargement...</p></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  fetch('/api/auth/check',{credentials:'include'}).then(r=>r.json()).then(d=>{if(!d.authenticated)window.location.href='/admin/login.html'});
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='/admin/login.html'});
+
+  async function loadStats(){
+    const [messes,actualites,evenements,mouvements,equipe,temos]=await Promise.all([
+      fetch('/api/messes',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/actualites',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/evenements',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/mouvements',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/equipe',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/temoignages',{credentials:'include'}).then(r=>r.json())
+    ]);
+    document.getElementById('countMesses').textContent=messes.length;
+    document.getElementById('countActualites').textContent=actualites.length;
+    document.getElementById('countEvenements').textContent=evenements.length;
+    document.getElementById('countMouvements').textContent=mouvements.length;
+    document.getElementById('countEquipe').textContent=equipe.length;
+    document.getElementById('countTemos').textContent=temos.length;
+
+    const ml=document.getElementById('messesList');
+    ml.innerHTML=messes.length===0?'<p style="color:var(--gray);font-size:.875rem">Aucune messe.</p>':
+      messes.slice(0,5).map(m=>`<div class="list-item"><div class="list-item-left"><div class="list-dot"></div><div><div class="list-item-name">${m.jour}</div><div class="list-item-sub">${m.type}</div></div></div><span class="badge badge-gold">${m.heure}</span></div>`).join('');
+
+    const al=document.getElementById('actualitesList');
+    al.innerHTML=actualites.length===0?'<p style="color:var(--gray);font-size:.875rem">Aucune actualité.</p>':
+      actualites.slice(0,5).map(a=>`<div class="list-item"><div class="list-item-left"><div class="list-dot"></div><div><div class="list-item-name">${a.titre}</div><div class="list-item-sub">${a.categorie}</div></div></div><span class="badge badge-blue">${a.date_publication||''}</span></div>`).join('');
+  }
+  loadStats();
+</script>
+</body>
+</html>
