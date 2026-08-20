@@ -689,6 +689,64 @@ async function loadActualitesPage() {
   }
 }
 
+// ---- Dictionnaire d'actualités de secours (mode hors-ligne / prévisualisation statique) ----
+const FALLBACK_ARTICLES = {
+  '1': {
+    id: 1,
+    titre: "Programme de la Semaine Sainte",
+    categorie: "vie-paroissiale",
+    date_publication: "Temps Pascal",
+    image: "Paque.jpg",
+    chapeau: "Des Rameaux à la Résurrection : découvrez le déroulement complet de nos célébrations.",
+    contenu: "La communauté paroissiale Saint-Benoît vous invite à vivre intensément les célébrations de la Semaine Sainte, sommet de l'année liturgique chrétienne.\n\n• Dimanche des Rameaux et de la Passion : Bénédiction solennelle des rameaux et messe de la Passion.\n• Jeudi Saint : Messe de la Cène du Seigneur, lavement des pieds et adoration au reposoir jusqu'à minuit.\n• Vendredi Saint : Chemin de Croix solennel à 15h00, suivi de la Célébration de la Passion du Seigneur et de la Vénération de la Sainte Croix.\n• Samedi Saint : Grande Vigile Pascale avec la bénédiction du feu nouveau, l'Exsultet, la liturgie baptismale et la première messe de la Résurrection.\n• Dimanche de Pâques : Messes solennelles de la Résurrection du Seigneur à 07h30 et 10h00.\n\nQue ce temps de grâce fortifie notre foi et nous unisse davantage dans l'espérance et la charité chrétienne !"
+  },
+  '2': {
+    id: 2,
+    titre: "Nos projets de construction avancent",
+    categorie: "projets",
+    date_publication: "Travaux en cours",
+    image: "grotte-mariale.jpg",
+    chapeau: "Construction de la Grotte Mariale et nouveau Presbytère pour notre communauté.",
+    contenu: "Notre paroisse poursuit son développement matériel et pastoral grâce à la générosité et à l'engagement de tous les fidèles.\n\n1. La Grotte Mariale paroissiale :\nVéritable havre de paix et de prière, les travaux d'aménagement de notre Grotte Mariale progressent admirablement. Conçue pour offrir aux paroissiens et aux pèlerins un lieu propice au recueillement et à la méditation du chapelet, elle sera bientôt inaugurée lors d'une célébration solennelle.\n\n2. Le Presbytère et les salles paroissiales :\nLe chantier de construction du nouveau presbytère se poursuit activement afin d'offrir à nos prêtres un cadre de vie digne et fonctionnel, ainsi que des espaces de travail adaptés pour les entretiens pastoraux et les réunions de mouvements.\n\nNous remercions chaleureusement chaque bienfaiteur et encourageons tous les fidèles à continuer de soutenir ces œuvres indispensables pour le rayonnement de notre église."
+  },
+  '3': {
+    id: 3,
+    titre: "Cérémonie de réparation après la profanation",
+    categorie: "vie-paroissiale",
+    date_publication: "Événement spirituel",
+    image: "reparation-autel.jpeg",
+    chapeau: "Célébration solennelle de prière et de réparation présidée par le Vicaire Général.",
+    contenu: "Suite à l'acte malveillant de profanation survenu au sein de notre église paroissiale, notre communauté s'est réunie dans une ferveur exemplaire pour une célébration solennelle de pénitence et de réparation présidée par le Vicaire Général.\n\nEntouré des prêtres de la paroisse et d'une assemblée nombreuse et recueillie, le célébrant a rappelé la sacralité du lieu saint et a purifié l'autel selon les rites liturgiques de l'Église.\n\nCette célébration a été l'occasion de réaffirmer notre attachement indéfectible au Christ, le pardon évangélique et le renouvellement de notre engagement spirituel. La communauté paroissiale ressort de cette épreuve plus unie, fervente et fortifiée dans sa mission de témoignage d'amour et de paix."
+  },
+  '4': {
+    id: 4,
+    titre: "Rencontre des jeunes (CPJ)",
+    categorie: "jeunes",
+    date_publication: "Mensuel",
+    image: "Match 31.jpg",
+    chapeau: "Partage, prière et activités fraternelles. Tous les jeunes sont les bienvenus.",
+    contenu: "Le Comité Paroissial des Jeunes (CPJ) de Saint-Benoît organise des rencontres régulières pour rassembler la jeunesse autour de la foi, du partage et de l'action fraternelle.\n\nAu programme : enseignements bibliques, temps de louange, activités sportives et culturelles, ainsi que des initiatives caritatives au profit des personnes vulnérables de notre quartier.\n\nTous les jeunes de 15 à 35 ans sont invités à nous rejoindre chaque premier samedi du mois pour grandir ensemble dans la foi et l'amitié !"
+  },
+  '5': {
+    id: 5,
+    titre: "Rejoindre nos chorales paroissiales",
+    categorie: "chorale",
+    date_publication: "Toute l'année",
+    image: "chorale.jpg",
+    chapeau: "Nos chorales accueillent les nouveaux choristes et instrumentistes.",
+    contenu: "La musique et le chant liturgique occupent une place essentielle dans la prière et la beauté de nos célébrations à la Paroisse Saint-Benoît.\n\nNos différentes chorales (Chorale Sainte-Cécile, Chorale des Jeunes, Chorale des Enfants, Groupe Gospel) ouvrent leurs portes à tous ceux et celles qui souhaitent mettre leur voix ou leurs talents musicaux au service du Seigneur.\n\nLes répétitions ont lieu en semaine et les samedis selon les groupes. Aucune expérience préalable n'est exigée, venez avec votre cœur et votre enthousiasme !"
+  },
+  '6': {
+    id: 6,
+    titre: "Adoration Eucharistique",
+    categorie: "vie-paroissiale",
+    date_publication: "Chaque mercredi",
+    image: "Adoration.jpg",
+    chapeau: "Chaque mercredi, venez passer un temps d'adoration auprès du Saint-Sacrement.",
+    contenu: "Le Saint-Sacrement est exposé chaque mercredi dans notre église paroissiale pour un temps privilégié de silence, de louange et de prière personnelle.\n\nPrendre un temps devant le Christ présent dans l'Eucharistie est une source incomparable de paix, de ressourcement et de renouveau spirituel au milieu de nos semaines chargées.\n\nLes prêtres sont également disponibles pendant ce temps pour le sacrement de Réconciliation (Confession) et l'écoute spirituelle."
+  }
+};
+
 // ---- Détail d'un article (page actualite-detail.html) ----
 async function loadArticleDetail() {
   const loading = document.getElementById('article-loading');
@@ -709,13 +767,7 @@ async function loadArticleDetail() {
   if (!detail) return;
 
   const params = new URLSearchParams(window.location.search);
-  const articleId = params.get('id');
-
-  if (!articleId) {
-    if (loading) loading.style.display = 'none';
-    if (notFound) notFound.style.display = 'block';
-    return;
-  }
+  const articleId = params.get('id') || '1';
 
   const LABELS = {
     'vie-paroissiale': 'Vie paroissiale',
@@ -724,12 +776,9 @@ async function loadArticleDetail() {
     'chorale': 'Chorales'
   };
 
-  try {
-    const res = await fetch(`${API_BASE}/api/actualites/${articleId}`);
-    if (!res.ok) throw new Error('Article non trouvé');
-    const a = await res.json();
-
+  function renderArticle(a) {
     if (loading) loading.style.display = 'none';
+    if (notFound) notFound.style.display = 'none';
 
     document.title = `${a.titre} - Paroisse Saint-Benoît`;
 
@@ -768,36 +817,54 @@ async function loadArticleDetail() {
     if (shareFacebook) shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
 
     detail.style.display = 'block';
+  }
 
-    // Suggestions d'autres articles
+  function renderSuggestions(articles) {
+    if (!suggestionsBox || !suggestionsGrid) return;
+    const others = articles.filter(item => String(item.id) !== String(articleId)).slice(0, 2);
+    if (others.length > 0) {
+      suggestionsGrid.innerHTML = others.map(item => `
+        <div class="news-card" data-category="${item.categorie}">
+          <img src="img/${item.image || 'og-image.jpg'}" alt="${item.titre}" width="400" height="220" loading="lazy"
+               onerror="this.src='img/og-image.jpg'">
+          <div class="news-content">
+            <span class="news-category">${LABELS[item.categorie] || item.categorie}</span>
+            <p class="news-date"><i class="far fa-calendar-alt"></i> ${item.date_publication || ''}</p>
+            <h3>${item.titre}</h3>
+            <p>${item.chapeau || ''}</p>
+            <a href="actualite-detail.html?id=${item.id}" class="read-more">Lire la suite →</a>
+          </div>
+        </div>
+      `).join('');
+      suggestionsBox.style.display = 'block';
+    }
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/actualites/${articleId}`);
+    if (!res.ok) throw new Error('Article non trouvé');
+    const a = await res.json();
+    renderArticle(a);
+
+    // Suggestions via API
     try {
       const allRes = await fetch(`${API_BASE}/api/actualites`);
       if (allRes.ok) {
         const allArticles = await allRes.json();
-        const otherArticles = allArticles.filter(item => String(item.id) !== String(articleId)).slice(0, 2);
-        if (otherArticles.length > 0 && suggestionsBox && suggestionsGrid) {
-          suggestionsGrid.innerHTML = otherArticles.map(item => `
-            <div class="news-card" data-category="${item.categorie}">
-              <img src="img/${item.image || 'og-image.jpg'}" alt="${item.titre}" width="400" height="220" loading="lazy"
-                   onerror="this.src='img/og-image.jpg'">
-              <div class="news-content">
-                <span class="news-category">${LABELS[item.categorie] || item.categorie}</span>
-                <p class="news-date"><i class="far fa-calendar-alt"></i> ${item.date_publication || ''}</p>
-                <h3>${item.titre}</h3>
-                <p>${item.chapeau || ''}</p>
-                <a href="actualite-detail.html?id=${item.id}" class="read-more">Lire la suite →</a>
-              </div>
-            </div>
-          `).join('');
-          suggestionsBox.style.display = 'block';
-        }
+        renderSuggestions(allArticles);
       }
     } catch (e) { /* suggestions optionnelles */ }
 
   } catch (err) {
-    console.warn('Impossible de charger l\'article :', err.message);
-    if (loading) loading.style.display = 'none';
-    if (notFound) notFound.style.display = 'block';
+    // Repli sur les articles statiques si l'API est indisponible
+    const fallbackArticle = FALLBACK_ARTICLES[String(articleId)];
+    if (fallbackArticle) {
+      renderArticle(fallbackArticle);
+      renderSuggestions(Object.values(FALLBACK_ARTICLES));
+    } else {
+      if (loading) loading.style.display = 'none';
+      if (notFound) notFound.style.display = 'block';
+    }
   }
 }
 
