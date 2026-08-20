@@ -39,8 +39,12 @@ function isAuth(req, res, next) {
 router.get("/", async (req, res) => {
   try {
     const db = await getDb();
-    const rows = all(db, "SELECT * FROM actualites WHERE actif=1 ORDER BY id DESC");
-    console.log(`📰 [ACTUALITES] GET -> ${rows.length} article(s)`);
+    const cat = req.query.categorie;
+    const sql = (cat && cat !== "all")
+      ? "SELECT * FROM actualites WHERE actif=1 AND categorie=? ORDER BY id DESC"
+      : "SELECT * FROM actualites WHERE actif=1 ORDER BY id DESC";
+    const rows = all(db, sql, (cat && cat !== "all") ? [cat] : []);
+    console.log(`📰 [ACTUALITES] GET -> ${rows.length} article(s)${cat ? ' (cat: ' + cat + ')' : ''}`);
     res.json(rows);
   } catch (err) { console.error("❌ [ACTUALITES] GET Erreur:", err.message); res.status(500).json({ error: err.message }); }
 });
@@ -52,21 +56,48 @@ router.get("/:id", async (req, res) => {
     const row = get(db, "SELECT * FROM actualites WHERE id=?", [id]);
     if (!row) {
       console.log(`⚠️  [ACTUALITES] GET -> Article #${id} non trouvé`);
-      return res.status(404).json({ error: "Non trouvé" });
+      return res.status(404).json({ error: "Article non trouvé" });
     }
     console.log(`📰 [ACTUALITES] GET #${id} -> "${row.titre}"`);
     res.json(row);
   } catch (err) { console.error(`❌ [ACTUALITES] GET #${req.params.id} Erreur:`, err.message); res.status(500).json({ error: err.message }); }
 });
 
+router.get("/:id/related", async (req, res) => {
+  try {
+    const db = await getDb();
+    const id = parseInt(req.params.id);
+    const current = get(db, "SELECT categorie FROM actualites WHERE id=?", [id]);
+    const cat = current ? current.categorie : null;
+
+    let rows = cat
+      ? all(db, "SELECT * FROM actualites WHERE actif=1 AND id!=? AND categorie=? ORDER BY id DESC LIMIT 2", [id, cat])
+      : [];
+
+    if (rows.length < 2) {
+      const excludeIds = [id, ...rows.map(r => r.id)];
+      const placeholders = excludeIds.map(() => "?").join(",");
+      const limit = 2 - rows.length;
+      const others = all(db, `SELECT * FROM actualites WHERE actif=1 AND id NOT IN (${placeholders}) ORDER BY id DESC LIMIT ${limit}`, excludeIds);
+      rows = [...rows, ...others];
+    }
+
+    res.json(rows);
+  } catch (err) {
+    console.error(`❌ [ACTUALITES] GET #${req.params.id}/related Erreur:`, err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post("/", isAuth, upload.single("image"), async (req, res) => {
   try {
     const db = await getDb();
-    const { titre, categorie, chapeau, contenu } = req.body;
+    const { titre, categorie, chapeau, contenu, date_publication } = req.body;
     const image = req.file ? req.file.filename : (req.body.image || null);
+    const dateVal = date_publication || new Date().toISOString().split("T")[0];
     const r = run(db,
-      "INSERT INTO actualites (titre, categorie, chapeau, contenu, image) VALUES (?,?,?,?,?)",
-      [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image]
+      "INSERT INTO actualites (titre, categorie, chapeau, contenu, image, date_publication) VALUES (?,?,?,?,?,?)",
+      [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image, dateVal]
     );
     console.log(`➕ [ACTUALITES] POST -> Nouvel article "${titre}" (ID: ${r.lastInsertRowid})`);
     res.json({ id: r.lastInsertRowid });
@@ -77,16 +108,17 @@ router.put("/:id", isAuth, upload.single("image"), async (req, res) => {
   try {
     const db = await getDb();
     const id = parseInt(req.params.id);
-    const { titre, categorie, chapeau, contenu } = req.body;
-    const existing = get(db, "SELECT image FROM actualites WHERE id=?", [id]);
+    const { titre, categorie, chapeau, contenu, date_publication } = req.body;
+    const existing = get(db, "SELECT image, date_publication FROM actualites WHERE id=?", [id]);
     if (!existing) {
       console.log(`⚠️  [ACTUALITES] PUT -> Article #${id} introuvable`);
       return res.status(404).json({ error: "Actualité introuvable" });
     }
     const image = req.file ? req.file.filename : (req.body.image || existing.image);
+    const dateVal = date_publication || existing.date_publication;
     run(db,
-      "UPDATE actualites SET titre=?, categorie=?, chapeau=?, contenu=?, image=? WHERE id=?",
-      [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image, id]
+      "UPDATE actualites SET titre=?, categorie=?, chapeau=?, contenu=?, image=?, date_publication=? WHERE id=?",
+      [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image, dateVal, id]
     );
     console.log(`✏️  [ACTUALITES] PUT -> Article #${id} mis à jour ("${titre}")`);
     res.json({ success: true });

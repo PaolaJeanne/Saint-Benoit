@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -229,8 +229,9 @@
           <div class="news-admin-card-footer">
             <span class="badge ${CATEGORY_BADGES[a.categorie] || 'badge-paroisse'}">${CATEGORY_LABELS[a.categorie] || a.categorie}</span>
             <div class="card-actions">
-              <button class="btn btn-secondary btn-sm" onclick="editActualite(${a.id})"><i class="fas fa-edit"></i></button>
-              <button class="btn btn-danger btn-sm" onclick="deleteActualite(${a.id})"><i class="fas fa-trash"></i></button>
+              <a href="/actualite-detail.html?id=${a.id}" target="_blank" class="btn btn-secondary btn-sm" title="Voir l'article en ligne"><i class="fas fa-external-link-alt"></i></a>
+              <button class="btn btn-secondary btn-sm" onclick="editActualite(${a.id})" title="Modifier"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="deleteActualite(${a.id})" title="Supprimer"><i class="fas fa-trash"></i></button>
             </div>
           </div>
         </div>
