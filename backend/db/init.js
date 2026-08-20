@@ -221,8 +221,13 @@ async function getDb() {
 }
 
 function saveDb(db) {
-  const data = db.export();
-  fs.writeFileSync(DB_PATH, Buffer.from(data));
+  try {
+    const data = db.export();
+    fs.writeFileSync(DB_PATH, Buffer.from(data));
+  } catch (err) {
+    console.error("❌ Erreur sauvegarde DB :", err.message);
+    throw err;
+  }
 }
 
 function all(db, sql, params = []) {
@@ -239,10 +244,28 @@ function get(db, sql, params = []) {
 }
 
 function run(db, sql, params = []) {
-  db.run(sql, params);
+  const upperSql = sql.trim().toUpperCase();
+  try {
+    db.run(sql, params);
+  } catch (err) {
+    console.error("❌ Erreur SQL :", sql, "\nParams:", params, "\nErreur:", err.message);
+    throw err;
+  }
+  // Récupérer le dernier ID inséré
+  const lastIdResult = db.exec("SELECT last_insert_rowid() as id");
+  const lastId = lastIdResult[0] ? lastIdResult[0].values[0][0] : null;
+  // Récupérer le nombre de lignes affectées
+  const changesResult = db.exec("SELECT changes() as n");
+  const rowsAffected = changesResult[0] ? changesResult[0].values[0][0] : 1; // défaut 1 si pas de résultat
+  // Sauvegarder sur disque
   saveDb(db);
-  const lastId = db.exec("SELECT last_insert_rowid() as id")[0];
-  return { lastInsertRowid: lastId ? lastId.values[0][0] : null };
+  if (rowsAffected === 0 && (upperSql.startsWith("UPDATE") || upperSql.startsWith("DELETE"))) {
+    console.warn("⚠️  Aucune ligne affectée :", sql, "| Params:", JSON.stringify(params));
+  } else {
+    console.log("✔", upperSql.split(" ")[0], "| Lignes:", rowsAffected, "| Params:", JSON.stringify(params));
+  }
+  return { lastInsertRowid: lastId, changes: rowsAffected };
 }
 
 module.exports = { getDb, all, get, run, saveDb };
+

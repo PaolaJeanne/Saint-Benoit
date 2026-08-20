@@ -1,5 +1,5 @@
-// Service Worker pour Paroisse Saint-Benoît
-const CACHE_NAME = 'saint-benoit-v3';
+﻿// Service Worker pour Paroisse Saint-Benoît
+const CACHE_NAME = 'saint-benoit-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -7,26 +7,19 @@ const urlsToCache = [
   '/mouvements.html',
   '/apropos.html',
   '/contact.html',
-  '/404.html',
   '/css/style.css',
-  '/js/script.js',
-  '/manifest.json',
-  '/img/favicon.ico',
-  '/img/icon.svg',
-  '/img/icon-192.png',
-  '/img/icon-512.png',
-  '/img/og-image.jpg',
-  '/img/OIP.webp'
+  '/js/script.js'
 ];
 
 // Installation du Service Worker
 self.addEventListener('install', function(event) {
+  self.skipWaiting(); // Forcer l'activation immédiate de la nouvelle version
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Cache ouvert');
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(function(cache) {
+      return Promise.allSettled(
+        urlsToCache.map(url => cache.add(url).catch(err => console.warn('Cache ignoré pour:', url, err.message)))
+      );
+    })
   );
 });
 
@@ -37,44 +30,52 @@ self.addEventListener('activate', function(event) {
       return Promise.all(
         cacheNames.map(function(cacheName) {
           if (cacheName !== CACHE_NAME) {
-            console.log('Suppression de l\'ancien cache:', cacheName);
+            console.log('Suppression ancien cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
 // Interception des requêtes
 self.addEventListener('fetch', function(event) {
+  const url = event.request.url;
+
+  // Ignorer ABSOLUMENT toutes les requêtes non-HTTP/HTTPS (extensions chrome-extension://, etc.)
+  // et ignorer les requêtes vers l'API et l'espace admin
+  if (
+    event.request.method !== 'GET' ||
+    (!url.startsWith('http://') && !url.startsWith('https://')) ||
+    url.includes('/api/') ||
+    url.includes('/admin')
+  ) {
+    return; // Laisser le réseau gérer sans mise en cache
+  }
+
   event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // Retourner la ressource du cache si elle existe
-        if (response) {
-          return response;
+    caches.match(event.request).then(function(cachedResponse) {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      return fetch(event.request).then(function(networkResponse) {
+        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          return networkResponse;
         }
-        
-        // Sinon, faire la requête réseau
-        return fetch(event.request).then(
-          function(response) {
-            // Vérifier si la réponse est valide
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
 
-            // Cloner la réponse
-            var responseToCache = response.clone();
+        if (event.request.url.startsWith('http://') || event.request.url.startsWith('https://')) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            cache.put(event.request, responseToCache).catch(() => {});
+          });
+        }
 
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-    );
+        return networkResponse;
+      }).catch(function(err) {
+        return cachedResponse;
+      });
+    })
+  );
 });

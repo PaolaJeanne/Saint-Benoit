@@ -177,10 +177,25 @@ body {
 /* ==============================
    SECTIONS SPÉCIALES
 ============================== */
+/* ==============================
+   BANNIÈRES PAGES INTERNES
+   (toutes définies APRÈS .hero pour bien écraser)
+============================== */
+
+/* Photos locales du projet utilisées comme fond */
 .hero-about {
-  height: 50vh;
-  background: linear-gradient(135deg, rgba(74,144,226,0.85) 0%, rgba(107,163,232,0.8) 100%),
-              url('https://images.unsplash.com/photo-1520637736862-4d197d17c90a?w=1600') center/cover;
+  background: linear-gradient(135deg, rgba(26,42,74,0.82) 0%, rgba(15,30,60,0.75) 100%),
+              url('../img/OIP.webp') center/cover no-repeat;
+}
+
+.hero-contact {
+  background: linear-gradient(135deg, rgba(26,42,74,0.82) 0%, rgba(15,30,60,0.75) 100%),
+              url('../img/grotte-mariale.jpg') center/cover no-repeat;
+}
+
+.hero-news {
+  background: linear-gradient(135deg, rgba(26,42,74,0.82) 0%, rgba(15,30,60,0.75) 100%),
+              url('../img/Paque.jpg') center 30%/cover no-repeat;
 }
 
 .cta-section {
@@ -212,11 +227,6 @@ body {
 /* ==============================
    STYLES SPÉCIFIQUES CONTACT
 ============================== */
-.hero-contact {
-  height: 40vh;
-  background: linear-gradient(135deg, rgba(74,144,226,0.85) 0%, rgba(107,163,232,0.8) 100%),
-              url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1600') center/cover;
-}
 
 .contact-title {
   color: var(--primary);
@@ -392,11 +402,6 @@ body {
 /* ==============================
    STYLES SPÉCIFIQUES ACTUALITÉS
 ============================== */
-.hero-news {
-  height: 40vh;
-  background: linear-gradient(135deg, rgba(74,144,226,0.85) 0%, rgba(107,163,232,0.8) 100%),
-              url('https://images.unsplash.com/photo-1507692049790-de58290a4334?w=1600') center/cover;
-}
 
 /* ==============================
    HEADER
@@ -512,8 +517,8 @@ header {
    HERO SECTION
 ============================== */
 .hero {
-  background: linear-gradient(135deg, rgba(74,144,226,0.85) 0%, rgba(107,163,232,0.8) 100%),
-              url('https://images.unsplash.com/photo-1520637736862-4d197d17c90a?w=1600') center/cover;
+  background: linear-gradient(135deg, rgba(26,42,74,0.82) 0%, rgba(15,30,60,0.75) 100%),
+              url('../img/Adoration.jpg') center/cover no-repeat;
   color: var(--white);
   text-align: center;
   padding: 8rem 0;
@@ -570,14 +575,14 @@ header {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
+  gap: 0.45rem;
+  padding: 0.75rem 1.5rem;
   background: var(--gradient-secondary);
   color: var(--white);
   text-decoration: none;
   border-radius: var(--radius-xl);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.925rem;
   transition: var(--transition);
   border: none;
   cursor: pointer;
@@ -1870,9 +1875,8 @@ footer::before {
    STYLES PAGE MOUVEMENTS
 ============================== */
 .hero-movements {
-  height: 50vh;
-  background: linear-gradient(135deg, rgba(74,144,226,0.85) 0%, rgba(107,163,232,0.8) 100%),
-              url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1600') center/cover;
+  background: linear-gradient(135deg, rgba(26,42,74,0.82) 0%, rgba(15,30,60,0.75) 100%),
+              url('../img/Nuit des jeunes.jpg') center/cover no-repeat;
 }
 
 .intro-content {
@@ -1883,83 +1887,118 @@ footer::before {
 
 .movements-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .movements-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.85rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .movements-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
 }
 
 .movement-card {
   background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  padding: 2rem;
-  border: 1px solid rgba(74,144,226,0.1);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.08);
+  padding: 0.85rem 0.75rem;
+  border: 1px solid rgba(74, 144, 226, 0.12);
   transition: var(--transition);
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  height: 100%;
 }
 
 .movement-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.14);
   background: var(--gradient-sky);
+}
+
+.movement-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
 }
 
 .movement-icon {
   background: var(--gradient-secondary);
   color: var(--white);
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-lg);
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 0.95rem;
   flex-shrink: 0;
-  box-shadow: var(--shadow);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-top: 0.1rem;
 }
 
-.movement-content {
+.movement-title-wrap {
   flex: 1;
+  min-width: 0;
 }
 
-.movement-content h3 {
+.movement-title-wrap h3 {
   color: var(--primary);
-  margin-bottom: 0.5rem;
-  font-size: 1.375rem;
+  margin-bottom: 0.1rem;
+  font-size: 0.88rem;
   font-weight: 600;
+  line-height: 1.25;
 }
 
 .movement-age {
   color: var(--secondary);
   font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  font-size: 0.68rem;
+  margin-bottom: 0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
+}
+
+.movement-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .movement-content > p {
   color: var(--text-gray);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  line-height: 1.35;
+  font-size: 0.76rem;
+  margin-bottom: 0.5rem;
+  flex: 1;
 }
 
 .movement-details {
-  background: var(--gradient-sky);
-  padding: 1rem;
-  border-radius: var(--radius);
-  margin-bottom: 1rem;
-  border-left: 3px solid var(--secondary);
+  background: #f1f7fd;
+  padding: 0.45rem 0.55rem;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  border-left: 2.5px solid var(--secondary);
+  text-align: left;
 }
 
 .movement-details p {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.72rem;
   color: var(--text-gray);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  line-height: 1.25;
 }
 
 .movement-details p:last-child {
@@ -1968,22 +2007,26 @@ footer::before {
 
 .movement-details i {
   color: var(--secondary);
-  width: 16px;
+  width: 12px;
+  font-size: 0.7rem;
+  flex-shrink: 0;
 }
 
 .movement-link {
   color: var(--secondary);
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.75rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
   transition: var(--transition);
+  margin-top: auto;
 }
 
 .movement-link:hover {
   color: var(--primary);
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 /* Groupes spécialisés */

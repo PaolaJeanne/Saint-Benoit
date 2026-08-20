@@ -12,33 +12,33 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 function isAuth(req, res, next) {
   if (req.session && req.session.authenticated) return next();
+  console.log("⛔ [ACTUALITES] Action refusée (non authentifié)");
   res.status(401).json({ error: "Non autorisé" });
 }
 
-// GET /api/actualites — public
 router.get("/", async (req, res) => {
   try {
     const db = await getDb();
     const rows = all(db, "SELECT * FROM actualites WHERE actif=1 ORDER BY id DESC");
+    console.log(`📰 [ACTUALITES] GET -> ${rows.length} article(s)`);
     res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { console.error("❌ [ACTUALITES] GET Erreur:", err.message); res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/actualites/:id — public
 router.get("/:id", async (req, res) => {
   try {
     const db = await getDb();
-    const row = get(db, "SELECT * FROM actualites WHERE id=?", [req.params.id]);
-    if (!row) return res.status(404).json({ error: "Non trouvé" });
+    const id = parseInt(req.params.id);
+    const row = get(db, "SELECT * FROM actualites WHERE id=?", [id]);
+    if (!row) {
+      console.log(`⚠️  [ACTUALITES] GET -> Article #${id} non trouvé`);
+      return res.status(404).json({ error: "Non trouvé" });
+    }
+    console.log(`📰 [ACTUALITES] GET #${id} -> "${row.titre}"`);
     res.json(row);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { console.error(`❌ [ACTUALITES] GET #${req.params.id} Erreur:`, err.message); res.status(500).json({ error: err.message }); }
 });
 
-// POST /api/actualites — admin
 router.post("/", isAuth, upload.single("image"), async (req, res) => {
   try {
     const db = await getDb();
@@ -48,38 +48,39 @@ router.post("/", isAuth, upload.single("image"), async (req, res) => {
       "INSERT INTO actualites (titre, categorie, chapeau, contenu, image) VALUES (?,?,?,?,?)",
       [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image]
     );
+    console.log(`➕ [ACTUALITES] POST -> Nouvel article "${titre}" (ID: ${r.lastInsertRowid})`);
     res.json({ id: r.lastInsertRowid });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { console.error("❌ [ACTUALITES] POST Erreur:", err.message); res.status(500).json({ error: err.message }); }
 });
 
-// PUT /api/actualites/:id — admin
 router.put("/:id", isAuth, upload.single("image"), async (req, res) => {
   try {
     const db = await getDb();
+    const id = parseInt(req.params.id);
     const { titre, categorie, chapeau, contenu } = req.body;
-    const existing = get(db, "SELECT image FROM actualites WHERE id=?", [req.params.id]);
-    const image = req.file ? req.file.filename : (req.body.image || (existing ? existing.image : null));
+    const existing = get(db, "SELECT image FROM actualites WHERE id=?", [id]);
+    if (!existing) {
+      console.log(`⚠️  [ACTUALITES] PUT -> Article #${id} introuvable`);
+      return res.status(404).json({ error: "Actualité introuvable" });
+    }
+    const image = req.file ? req.file.filename : (req.body.image || existing.image);
     run(db,
       "UPDATE actualites SET titre=?, categorie=?, chapeau=?, contenu=?, image=? WHERE id=?",
-      [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image, req.params.id]
+      [titre, categorie || "vie-paroissiale", chapeau || null, contenu || null, image, id]
     );
+    console.log(`✏️  [ACTUALITES] PUT -> Article #${id} mis à jour ("${titre}")`);
     res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { console.error(`❌ [ACTUALITES] PUT #${req.params.id} Erreur:`, err.message); res.status(500).json({ error: err.message }); }
 });
 
-// DELETE /api/actualites/:id — admin
 router.delete("/:id", isAuth, async (req, res) => {
   try {
     const db = await getDb();
-    run(db, "DELETE FROM actualites WHERE id=?", [req.params.id]);
+    const id = parseInt(req.params.id);
+    run(db, "DELETE FROM actualites WHERE id=?", [id]);
+    console.log(`🗑️  [ACTUALITES] DELETE -> Article #${id} supprimé`);
     res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { console.error(`❌ [ACTUALITES] DELETE #${req.params.id} Erreur:`, err.message); res.status(500).json({ error: err.message }); }
 });
 
 module.exports = router;

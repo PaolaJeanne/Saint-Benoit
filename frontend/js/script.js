@@ -882,16 +882,21 @@ async function loadMouvements() {
       if (!container || !list.length) return;
       container.innerHTML = list.map(m => `
         <div class="movement-card">
-          <div class="movement-icon"><i class="fas ${m.icone || 'fa-users'}"></i></div>
+          <div class="movement-header">
+            <div class="movement-icon"><i class="fas ${m.icone || 'fa-users'}"></i></div>
+            <div class="movement-title-wrap">
+              <h3>${m.nom}</h3>
+              ${m.tranche_age ? `<p class="movement-age">${m.tranche_age}</p>` : ''}
+            </div>
+          </div>
           <div class="movement-content">
-            <h3>${m.nom}</h3>
-            ${m.tranche_age ? `<p class="movement-age">${m.tranche_age}</p>` : ''}
             <p>${m.description || ''}</p>
+            ${(m.horaire || m.lieu || m.responsable) ? `
             <div class="movement-details">
               ${m.horaire ? `<p><i class="fas fa-calendar"></i> ${m.horaire}</p>` : ''}
               ${m.lieu ? `<p><i class="fas fa-map-marker-alt"></i> ${m.lieu}</p>` : ''}
               ${m.responsable ? `<p><i class="fas fa-user"></i> ${m.responsable}</p>` : ''}
-            </div>
+            </div>` : ''}
             <a href="contact.html" class="movement-link">Nous contacter →</a>
           </div>
         </div>`).join('');

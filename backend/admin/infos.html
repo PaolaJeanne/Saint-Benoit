@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -15,6 +15,7 @@
     .sidebar-nav{flex:1;padding:1rem 0}
     .nav-item a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.5rem;color:rgba(255,255,255,.7);text-decoration:none;transition:all .2s;font-size:.9rem}
     .nav-item a:hover,.nav-item a.active{background:rgba(201,162,39,.15);color:var(--accent);border-right:3px solid var(--accent)}
+    .nav-section{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);padding:.85rem 1.5rem .35rem}
     .nav-item a i{width:18px;text-align:center}
     .sidebar-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.1)}
     .btn-logout{width:100%;padding:.6rem;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
@@ -22,7 +23,7 @@
     .main{margin-left:240px;padding:2rem}
     .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
     .page-header h1{font-size:1.5rem;color:var(--primary)}
-    .btn{padding:.65rem 1.25rem;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn{padding:.52rem 1.05rem;border-radius:8px;border:none;font-size:.84rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
     .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dark)}
     .section-card{background:var(--white);border-radius:12px;padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
     .section-card h2{font-size:1rem;font-weight:600;color:var(--primary);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
@@ -46,14 +47,19 @@
   <div class="sidebar-brand"><i class="fas fa-church"></i><span>Saint-Benoît Admin</span></div>
   <nav class="sidebar-nav">
     <div class="nav-item"><a href="/admin/"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
+    <div class="nav-section">Liturgie</div>
     <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
-    <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
     <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
-    <div class="nav-item"><a href="/admin/equipe.html"><i class="fas fa-users"></i> Équipe pastorale</a></div>
+    <div class="nav-section">Contenu</div>
+    <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
     <div class="nav-item"><a href="/admin/mouvements.html"><i class="fas fa-hands-praying"></i> Mouvements</a></div>
     <div class="nav-item"><a href="/admin/temoignages.html"><i class="fas fa-quote-left"></i> Témoignages</a></div>
-    <div class="nav-item"><a href="/admin/infos.html" class="active"><i class="fas fa-cog"></i> Infos paroisse</a></div>
-    <div class="nav-item" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)"><a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> Voir le site</a></div>
+    <div class="nav-section">Paroisse</div>
+    <div class="nav-item"><a href="/admin/equipe.html"><i class="fas fa-users"></i> Équipe pastorale</a></div>
+    <div class="nav-item"><a href="/admin/infos.html" class="active"><i class="fas fa-cog"></i> Infos &amp; Contact</a></div>
+    <div class="nav-item" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)">
+      <a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> Voir le site</a>
+    </div>
   </nav>
   <div class="sidebar-footer"><button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button></div>
 </aside>
@@ -133,7 +139,7 @@
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(updates)
     });
-    if(res.ok) showToast('Modifications enregistrées !');
+    if(res.status===401){showToast('Session expirée. Reconnexion...','error');setTimeout(()=>window.location.href='/admin/login.html',1200);return;} if(res.ok) showToast('Modifications enregistrées !');
     else showToast('Erreur lors de la sauvegarde.','error');
   }
 
@@ -141,3 +147,6 @@
 </script>
 </body>
 </html>
+
+
+

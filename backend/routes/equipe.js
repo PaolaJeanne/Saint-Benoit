@@ -1,4 +1,4 @@
-const express = require("express");
+﻿const express = require("express");
 const router = express.Router();
 const { getDb, all, get, run } = require("../db/init");
 const multer = require("multer");
@@ -12,14 +12,17 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 function isAuth(req, res, next) {
   if (req.session && req.session.authenticated) return next();
+  console.log("⛔ [EQUIPE] Action refusée (non authentifié)");
   res.status(401).json({ error: "Non autorisé" });
 }
 
 router.get("/", async (req, res) => {
   try {
     const db = await getDb();
-    res.json(all(db, "SELECT * FROM equipe WHERE actif=1 ORDER BY ordre, id"));
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    const rows = all(db, "SELECT * FROM equipe WHERE actif=1 ORDER BY ordre, id");
+    console.log(`👥 [EQUIPE] GET -> ${rows.length} membre(s)`);
+    res.json(rows);
+  } catch (err) { console.error("❌ [EQUIPE] GET Erreur:", err.message); res.status(500).json({ error: err.message }); }
 });
 
 router.post("/", isAuth, upload.single("photo"), async (req, res) => {
@@ -29,32 +32,41 @@ router.post("/", isAuth, upload.single("photo"), async (req, res) => {
     const photo = req.file ? req.file.filename : (req.body.photo || null);
     const r = run(db,
       "INSERT INTO equipe (nom, role, bio, photo, email, ordre) VALUES (?,?,?,?,?,?)",
-      [nom, role, bio || null, photo, email || null, ordre || 0]
+      [nom, role, bio || null, photo, email || null, parseInt(ordre) || 0]
     );
+    console.log(`➕ [EQUIPE] POST -> Ajout membre "${nom}" (${role}) (ID: ${r.lastInsertRowid})`);
     res.json({ id: r.lastInsertRowid });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { console.error("❌ [EQUIPE] POST Erreur:", err.message); res.status(500).json({ error: err.message }); }
 });
 
 router.put("/:id", isAuth, upload.single("photo"), async (req, res) => {
   try {
     const db = await getDb();
+    const id = parseInt(req.params.id);
     const { nom, role, bio, email, ordre } = req.body;
-    const existing = get(db, "SELECT photo FROM equipe WHERE id=?", [req.params.id]);
-    const photo = req.file ? req.file.filename : (req.body.photo || (existing ? existing.photo : null));
+    const existing = get(db, "SELECT photo FROM equipe WHERE id=?", [id]);
+    if (!existing) {
+      console.log(`⚠️  [EQUIPE] PUT -> Membre #${id} introuvable`);
+      return res.status(404).json({ error: "Membre introuvable" });
+    }
+    const photo = req.file ? req.file.filename : (req.body.photo || existing.photo);
     run(db,
       "UPDATE equipe SET nom=?, role=?, bio=?, photo=?, email=?, ordre=? WHERE id=?",
-      [nom, role, bio || null, photo, email || null, ordre || 0, req.params.id]
+      [nom, role, bio || null, photo, email || null, parseInt(ordre) || 0, id]
     );
+    console.log(`✏️  [EQUIPE] PUT -> Membre #${id} mis à jour ("${nom}")`);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { console.error(`❌ [EQUIPE] PUT #${req.params.id} Erreur:`, err.message); res.status(500).json({ error: err.message }); }
 });
 
 router.delete("/:id", isAuth, async (req, res) => {
   try {
     const db = await getDb();
-    run(db, "DELETE FROM equipe WHERE id=?", [req.params.id]);
+    const id = parseInt(req.params.id);
+    run(db, "DELETE FROM equipe WHERE id=?", [id]);
+    console.log(`🗑️  [EQUIPE] DELETE -> Membre #${id} supprimé`);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { console.error(`❌ [EQUIPE] DELETE #${req.params.id} Erreur:`, err.message); res.status(500).json({ error: err.message }); }
 });
 
 module.exports = router;
