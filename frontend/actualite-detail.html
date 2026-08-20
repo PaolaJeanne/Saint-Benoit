@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualité - Paroisse Saint-Benoît</title>
+    <meta name="description" content="Découvrez les détails de cette actualité de la Paroisse Saint-Benoît.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo" aria-label="Paroisse Saint-Benoît - Accueil">
+                    <i class="fas fa-church" aria-hidden="true"></i>
+                    <span class="logo-text">Saint-Benoît</span>
+                </a>
+                
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="actualites.html" class="active">Actualités</a></li>
+                        <li><a href="mouvements.html">Mouvements</a></li>
+                        <li><a href="apropos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                    <button class="menu-toggle" aria-label="Menu de navigation">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero hero-news" id="article-hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="news-category" id="article-badge" style="display:none">Vie paroissiale</span>
+                <h1 id="article-titre" style="font-size:2.5rem;margin-bottom:1rem;color:white;text-shadow:0 2px 4px rgba(0,0,0,0.4)">Actualité</h1>
+                <p id="article-date" style="font-size:1rem;opacity:0.9;color:rgba(255,255,255,0.9)"><i class="far fa-calendar-alt"></i> Chargement...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENU DE L'ARTICLE -->
+    <section class="section bg-white">
+        <div class="container">
+            <div class="article-layout">
+                <!-- Bouton retour -->
+                <div style="margin-bottom: 2rem;">
+                    <a href="actualites.html" class="btn btn-outline-primary" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;padding:0.6rem 1.2rem;border-radius:25px;font-weight:500;">
+                        <i class="fas fa-arrow-left"></i> Retour aux actualités
+                    </a>
+                </div>
+
+                <!-- État de chargement -->
+                <div id="article-loading" style="text-align:center;padding:4rem 0;color:var(--gray)">
+                    <i class="fas fa-spinner fa-spin" style="font-size:2.5rem;color:var(--primary)"></i>
+                    <p style="margin-top:1rem;font-size:1.1rem">Chargement de l'article...</p>
+                </div>
+
+                <!-- État introuvable -->
+                <div id="article-notfound" style="display:none;text-align:center;padding:4rem 0;">
+                    <i class="fas fa-exclamation-circle" style="font-size:3rem;color:var(--warning);margin-bottom:1rem;display:block"></i>
+                    <h2 style="color:var(--dark);margin-bottom:1rem">Article introuvable</h2>
+                    <p style="color:var(--gray);margin-bottom:2rem">Cet article n'existe pas ou a été déplacé.</p>
+                    <a href="actualites.html" class="btn">Voir toutes les actualités</a>
+                </div>
+
+                <!-- Détail de l'article -->
+                <article id="article-detail" style="display:none;max-width:860px;margin:0 auto;">
+                    <!-- Image principale -->
+                    <div class="article-cover-wrap" id="article-image-wrap" style="margin-bottom:2.5rem;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg);">
+                        <img id="article-image" src="img/og-image.jpg" alt="Illustration actualité" style="width:100%;max-height:480px;object-fit:cover;display:block;">
+                    </div>
+
+                    <!-- Chapeau (lead) -->
+                    <div id="article-chapeau-container" style="display:none;margin-bottom:2rem;">
+                        <p class="lead-text" id="article-chapeau" style="font-size:1.25rem;line-height:1.7;color:var(--primary);font-weight:500;border-left:4px solid var(--secondary);padding-left:1.25rem;"></p>
+                    </div>
+
+                    <!-- Corps de l'article -->
+                    <div id="article-contenu" class="article-body-text" style="font-size:1.05rem;line-height:1.85;color:var(--dark);margin-bottom:3rem;"></div>
+
+                    <!-- Partage & Action -->
+                    <div class="article-footer-box" style="background:var(--warm-gray);padding:1.5rem 2rem;border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border:1px solid var(--medium-gray);">
+                        <div>
+                            <span style="font-weight:600;color:var(--primary);display:block;margin-bottom:0.25rem;">Partager cet article</span>
+                            <span style="font-size:0.85rem;color:var(--gray);">Faites rayonner la vie de notre paroisse</span>
+                        </div>
+                        <div style="display:flex;gap:0.75rem;">
+                            <a id="share-whatsapp" href="#" target="_blank" class="btn btn-sm" style="background:#25D366;color:white;text-decoration:none;" aria-label="Partager sur WhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                            <a id="share-facebook" href="#" target="_blank" class="btn btn-sm" style="background:#1877F2;color:white;text-decoration:none;" aria-label="Partager sur Facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autres actualités suggérées -->
+                <div id="article-suggestions" style="display:none;margin-top:5rem;padding-top:3rem;border-top:1px solid var(--medium-gray);">
+                    <h3 style="text-align:center;color:var(--primary);margin-bottom:2.5rem;font-size:1.75rem;">Autres actualités récentes</h3>
+                    <div class="news-grid" id="article-suggestions-grid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Paroisse Saint-Benoît</h3>
+                    <p class="footer-description">Une communauté vivante de foi, d'espérance et de charité au service de tous.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/paroisse.saintbenoit.dallas" class="social-facebook" aria-label="Page Facebook de la paroisse"><i class="fab fa-facebook-f"></i><span class="sr-only">Facebook</span></a>
+                        <a href="https://instagram.com/saintbenoit_dallas" class="social-instagram" aria-label="Compte Instagram de la paroisse"><i class="fab fa-instagram"></i><span class="sr-only">Instagram</span></a>
+                        <a href="https://youtube.com/@paroissesaintbenoit" class="social-youtube" aria-label="Chaîne YouTube de la paroisse"><i class="fab fa-youtube"></i><span class="sr-only">YouTube</span></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span class="footer-adresse">PK15 - PK16, Dallas-Nsape</span></p>
+                    <p><i class="fas fa-phone"></i> <span class="footer-telephone">+237 6 91 06 04 15</span></p>
+                    <p><i class="fas fa-envelope"></i> <span class="footer-email">contact@saint-benoit.cm</span></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Liens rapides</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="actualites.html">Actualités</a></li>
+                        <li><a href="mouvements.html">Mouvements</a></li>
+                        <li><a href="apropos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Newsletter</h3>
+                    <p>Recevez nos actualités par email</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Votre email" required>
+                        <button type="submit">S'inscrire</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="copyright"><p class="footer-copyright">&copy; 2025 Paroisse Saint-Benoît. Tous droits réservés.</p></div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="js/script.js"></script>
+    
+    <!-- Service Worker pour PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker enregistré avec succès:', registration.scope);
+                    }, function(err) {
+                        console.log('Échec de l\'enregistrement du Service Worker:', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

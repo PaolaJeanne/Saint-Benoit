@@ -1,4 +1,4 @@
-﻿const initSqlJs = require("sql.js");
+const initSqlJs = require("sql.js");
 const path = require("path");
 const fs = require("fs");
 
@@ -113,12 +113,27 @@ async function getDb() {
 
   const ac = _db.exec("SELECT COUNT(*) as c FROM actualites")[0];
   if (ac && ac.values[0][0] === 0) {
-    _db.run("INSERT INTO actualites (titre, categorie, chapeau, image) VALUES (?, ?, ?, ?)",
-      ["Programme de la Semaine Sainte", "vie-paroissiale", "Des Rameaux à la Résurrection : découvrez le déroulement complet.", "Paque.jpg"]);
-    _db.run("INSERT INTO actualites (titre, categorie, chapeau, image) VALUES (?, ?, ?, ?)",
-      ["Nos projets de construction avancent", "projets", "Construction de la Grotte Mariale et nouveau Presbytère.", "grotte-mariale.jpg"]);
-    _db.run("INSERT INTO actualites (titre, categorie, chapeau, image) VALUES (?, ?, ?, ?)",
-      ["Cérémonie de réparation après la profanation", "vie-paroissiale", "Célébration présidée par le Vicaire Général.", "reparation-autel.jpeg"]);
+    _db.run("INSERT INTO actualites (titre, categorie, chapeau, contenu, image) VALUES (?, ?, ?, ?, ?)", [
+      "Programme de la Semaine Sainte",
+      "vie-paroissiale",
+      "Des Rameaux à la Résurrection : découvrez le déroulement complet de nos célébrations.",
+      "La communauté paroissiale Saint-Benoît vous invite à vivre intensément les célébrations de la Semaine Sainte, sommet de l'année liturgique chrétienne.\n\n• Dimanche des Rameaux et de la Passion : Bénédiction solennelle des rameaux et messe de la Passion.\n• Jeudi Saint : Messe de la Cène du Seigneur, lavement des pieds et adoration au reposoir jusqu'à minuit.\n• Vendredi Saint : Chemin de Croix solennel à 15h00, suivi de la Célébration de la Passion du Seigneur et de la Vénération de la Sainte Croix.\n• Samedi Saint : Grande Vigile Pascale avec la bénédiction du feu nouveau, l'Exsultet, la liturgie baptismale et la première messe de la Résurrection.\n• Dimanche de Pâques : Messes solennelles de la Résurrection du Seigneur à 07h30 et 10h00.\n\nQue ce temps de grâce fortifie notre foi et nous unisse davantage dans l'espérance et la charité chrétienne !",
+      "Paque.jpg"
+    ]);
+    _db.run("INSERT INTO actualites (titre, categorie, chapeau, contenu, image) VALUES (?, ?, ?, ?, ?)", [
+      "Nos projets de construction avancent",
+      "projets",
+      "Construction de la Grotte Mariale et nouveau Presbytère pour notre communauté.",
+      "Notre paroisse poursuit son développement matériel et pastoral grâce à la générosité et à l'engagement de tous les fidèles.\n\n1. La Grotte Mariale paroissiale :\nVéritable havre de paix et de prière, les travaux d'aménagement de notre Grotte Mariale progressent admirablement. Conçue pour offrir aux paroissiens et aux pèlerins un lieu propice au recueillement et à la méditation du chapelet, elle sera bientôt inaugurée lors d'une célébration solennelle.\n\n2. Le Presbytère et les salles paroissiales :\nLe chantier de construction du nouveau presbytère se poursuit activement afin d'offrir à nos prêtres un cadre de vie digne et fonctionnel, ainsi que des espaces de travail adaptés pour les entretiens pastoraux et les réunions de mouvements.\n\nNous remercions chaleureusement chaque bienfaiteur et encourageons tous les fidèles à continuer de soutenir ces œuvres indispensables pour le rayonnement de notre église.",
+      "grotte-mariale.jpg"
+    ]);
+    _db.run("INSERT INTO actualites (titre, categorie, chapeau, contenu, image) VALUES (?, ?, ?, ?, ?)", [
+      "Cérémonie de réparation après la profanation",
+      "vie-paroissiale",
+      "Célébration solennelle de prière et de réparation présidée par le Vicaire Général.",
+      "Suite à l'acte malveillant de profanation survenu au sein de notre église paroissiale, notre communauté s'est réunie dans une ferveur exemplaire pour une célébration solennelle de pénitence et de réparation présidée par le Vicaire Général.\n\nEntouré des prêtres de la paroisse et d'une assemblée nombreuse et recueillie, le célébrant a rappelé la sacralité du lieu saint et a purifié l'autel selon les rites liturgiques de l'Église.\n\nCette célébration a été l'occasion de réaffirmer notre attachement indéfectible au Christ, le pardon évangélique et le renouvellement de notre engagement spirituel. La communauté paroissiale ressort de cette épreuve plus unie, fervente et fortifiée dans sa mission de témoignage d'amour et de paix.",
+      "reparation-autel.jpeg"
+    ]);
   }
 
   const ec = _db.exec("SELECT COUNT(*) as c FROM evenements")[0];

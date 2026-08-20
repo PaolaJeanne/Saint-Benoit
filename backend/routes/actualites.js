@@ -1,14 +1,34 @@
-﻿const express = require("express");
+const express = require("express");
 const router = express.Router();
 const { getDb, all, get, run } = require("../db/init");
 const multer = require("multer");
 const path = require("path");
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, "..", "..", "img")),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname.replace(/\s/g, "-"))
+  destination: (req, file, cb) => cb(null, path.join(__dirname, "..", "..", "frontend", "img")),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const baseName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, "_");
+    cb(null, `${Date.now()}-${baseName}${ext}`);
+  }
 });
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+const fileFilter = (req, file, cb) => {
+  const allowedMimes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"];
+  const ext = path.extname(file.originalname).toLowerCase();
+  const allowedExts = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+  if (allowedMimes.includes(file.mimetype) && allowedExts.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Seuls les formats d'image (JPG, PNG, WebP, GIF) sont autorisés."), false);
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5 Mo max
+});
 
 function isAuth(req, res, next) {
   if (req.session && req.session.authenticated) return next();

@@ -2229,3 +2229,67 @@ footer::before {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==============================
+   PAGE DÉTAIL ACTUALITÉ
+============================== */
+.article-layout {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.article-cover-wrap {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--light-gray);
+}
+
+.article-cover-wrap img {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+}
+
+.article-body-text {
+  font-size: 1.075rem;
+  line-height: 1.85;
+  color: var(--dark);
+}
+
+.article-body-text p {
+  margin-bottom: 1.35rem;
+  color: var(--dark);
+}
+
+.article-body-text p:last-child {
+  margin-bottom: 0;
+}
+
+.article-footer-box {
+  background: var(--warm-gray);
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--medium-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .article-footer-box {
+    flex-direction: column;
+    text-align: center;
+    align-items: stretch;
+  }
+  .article-footer-box > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

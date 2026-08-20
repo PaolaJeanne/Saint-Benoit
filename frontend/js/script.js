@@ -583,7 +583,7 @@ async function loadActualitesAccueil() {
           <span class="news-category">${LABELS[a.categorie] || a.categorie}</span>
           <h3>${a.titre}</h3>
           <p>${a.chapeau || ''}</p>
-          <a href="actualites.html" class="read-more">Lire la suite →</a>
+          <a href="actualite-detail.html?id=${a.id}" class="read-more">Lire la suite →</a>
         </div>
       </div>
     `).join('');
@@ -671,7 +671,7 @@ async function loadActualitesPage() {
           <p class="news-date"><i class="far fa-calendar-alt" aria-hidden="true"></i> ${a.date_publication || ''}</p>
           <h3>${a.titre}</h3>
           <p>${a.chapeau || a.contenu || ''}</p>
-          <a href="#" class="read-more" onclick="return false;">Lire la suite →</a>
+          <a href="actualite-detail.html?id=${a.id}" class="read-more">Lire la suite →</a>
         </div>
       </div>
     `).join('');
@@ -686,6 +686,118 @@ async function loadActualitesPage() {
     // Afficher le contenu de secours statique
     if (loader) loader.style.display = 'none';
     if (fallback) { fallback.style.display = 'grid'; initFiltresActualites(); }
+  }
+}
+
+// ---- Détail d'un article (page actualite-detail.html) ----
+async function loadArticleDetail() {
+  const loading = document.getElementById('article-loading');
+  const notFound = document.getElementById('article-notfound');
+  const detail = document.getElementById('article-detail');
+  const heroTitre = document.getElementById('article-titre');
+  const heroDate = document.getElementById('article-date');
+  const badge = document.getElementById('article-badge');
+  const image = document.getElementById('article-image');
+  const chapeauContainer = document.getElementById('article-chapeau-container');
+  const chapeau = document.getElementById('article-chapeau');
+  const contenu = document.getElementById('article-contenu');
+  const shareWhatsapp = document.getElementById('share-whatsapp');
+  const shareFacebook = document.getElementById('share-facebook');
+  const suggestionsBox = document.getElementById('article-suggestions');
+  const suggestionsGrid = document.getElementById('article-suggestions-grid');
+
+  if (!detail) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const articleId = params.get('id');
+
+  if (!articleId) {
+    if (loading) loading.style.display = 'none';
+    if (notFound) notFound.style.display = 'block';
+    return;
+  }
+
+  const LABELS = {
+    'vie-paroissiale': 'Vie paroissiale',
+    'projets': 'Projets',
+    'jeunes': 'Jeunes',
+    'chorale': 'Chorales'
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/actualites/${articleId}`);
+    if (!res.ok) throw new Error('Article non trouvé');
+    const a = await res.json();
+
+    if (loading) loading.style.display = 'none';
+
+    document.title = `${a.titre} - Paroisse Saint-Benoît`;
+
+    if (heroTitre) heroTitre.textContent = a.titre;
+    if (heroDate) heroDate.innerHTML = `<i class="far fa-calendar-alt"></i> ${a.date_publication || 'Paroisse Saint-Benoît'}`;
+
+    if (badge) {
+      badge.textContent = LABELS[a.categorie] || a.categorie;
+      badge.style.display = 'inline-block';
+    }
+
+    if (image) {
+      image.src = `img/${a.image || 'og-image.jpg'}`;
+      image.alt = a.titre;
+      image.onerror = function() { this.src = 'img/og-image.jpg'; };
+    }
+
+    if (a.chapeau && chapeau && chapeauContainer) {
+      chapeau.textContent = a.chapeau;
+      chapeauContainer.style.display = 'block';
+    }
+
+    if (contenu) {
+      const rawText = a.contenu || a.chapeau || 'Aucun texte supplémentaire disponible.';
+      const paragraphs = rawText
+        .split(/\n\s*\n/)
+        .map(p => `<p style="margin-bottom:1.25rem;">${p.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+      contenu.innerHTML = paragraphs;
+    }
+
+    // Liens de partage
+    const currentUrl = encodeURIComponent(window.location.href);
+    const shareText = encodeURIComponent(`${a.titre} — Paroisse Saint-Benoît`);
+    if (shareWhatsapp) shareWhatsapp.href = `https://api.whatsapp.com/send?text=${shareText}%20${currentUrl}`;
+    if (shareFacebook) shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+
+    detail.style.display = 'block';
+
+    // Suggestions d'autres articles
+    try {
+      const allRes = await fetch(`${API_BASE}/api/actualites`);
+      if (allRes.ok) {
+        const allArticles = await allRes.json();
+        const otherArticles = allArticles.filter(item => String(item.id) !== String(articleId)).slice(0, 2);
+        if (otherArticles.length > 0 && suggestionsBox && suggestionsGrid) {
+          suggestionsGrid.innerHTML = otherArticles.map(item => `
+            <div class="news-card" data-category="${item.categorie}">
+              <img src="img/${item.image || 'og-image.jpg'}" alt="${item.titre}" width="400" height="220" loading="lazy"
+                   onerror="this.src='img/og-image.jpg'">
+              <div class="news-content">
+                <span class="news-category">${LABELS[item.categorie] || item.categorie}</span>
+                <p class="news-date"><i class="far fa-calendar-alt"></i> ${item.date_publication || ''}</p>
+                <h3>${item.titre}</h3>
+                <p>${item.chapeau || ''}</p>
+                <a href="actualite-detail.html?id=${item.id}" class="read-more">Lire la suite →</a>
+              </div>
+            </div>
+          `).join('');
+          suggestionsBox.style.display = 'block';
+        }
+      }
+    } catch (e) { /* suggestions optionnelles */ }
+
+  } catch (err) {
+    console.warn('Impossible de charger l\'article :', err.message);
+    if (loading) loading.style.display = 'none';
+    if (notFound) notFound.style.display = 'block';
   }
 }
 
@@ -715,21 +827,6 @@ function initFiltresActualites() {
     });
   });
 }
-
-// ---- Lancement automatique selon la page ----
-document.addEventListener('DOMContentLoaded', function() {
-  const page = window.location.pathname.split('/').pop() || 'index.html';
-
-  if (page === 'index.html' || page === '') {
-    loadMesses();
-    loadActualitesAccueil();
-    loadEvenementsAccueil();
-  }
-
-  if (page === 'actualites.html') {
-    loadActualitesPage();
-  }
-});
 
 // ==============================
 // INFOS PAROISSE — cache global chargé une seule fois
@@ -1000,6 +1097,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   if (page === 'actualites.html') {
     loadActualitesPage();
+  }
+  if (page === 'actualite-detail.html') {
+    loadArticleDetail();
   }
   if (page === 'apropos.html') {
     loadEquipe();
