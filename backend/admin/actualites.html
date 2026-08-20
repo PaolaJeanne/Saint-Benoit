@@ -131,14 +131,19 @@
             <option value="chorale">Chorales</option>
           </select>
         </div>
+        <div class="form-group">
+          <label>Date de publication</label>
+          <input type="text" id="date_publication" placeholder="Ex : Temps Pascal ou 2026-08-20">
+        </div>
       </div>
       <div class="form-group">
-        <label>Chapeau (résumé court)</label>
-        <input type="text" id="chapeau" placeholder="Une phrase résumant l'article...">
+        <label>Chapeau (résumé court en haut de l'article)</label>
+        <input type="text" id="chapeau" placeholder="Une ou deux phrases d'introduction...">
       </div>
       <div class="form-group">
-        <label>Contenu complet</label>
-        <textarea id="contenu" placeholder="Rédigez le contenu complet de l'article ici..."></textarea>
+        <label>Contenu complet (affiché lors du clic sur "Lire la suite")</label>
+        <textarea id="contenu" rows="8" placeholder="Rédigez le texte complet de l'article avec vos paragraphes, détails des célébrations ou informations pastorales..."></textarea>
+        <p style="font-size:0.75rem;color:var(--gray);margin-top:0.25rem">💡 Ce texte s'affiche en entier dans la fenêtre de lecture et sur la page dédiée.</p>
       </div>
       <div class="form-group">
         <label>Image</label>
@@ -166,6 +171,24 @@
     </div>
   </div>
 </main>
+
+<!-- Modale d'aperçu de l'article -->
+<div id="adminArticleModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:12px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem;position:relative;box-shadow:0 10px 40px rgba(0,0,0,0.25);">
+    <button onclick="closeAdminModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;">&times;</button>
+    <div id="adminModalImage" style="margin-bottom:1.5rem;text-align:center;"></div>
+    <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.75rem;">
+      <span id="adminModalBadge" class="badge badge-paroisse"></span>
+      <span id="adminModalDate" style="font-size:0.85rem;color:#888;"></span>
+    </div>
+    <h2 id="adminModalTitle" style="color:var(--primary);margin-bottom:1rem;font-size:1.4rem;"></h2>
+    <p id="adminModalChapeau" style="font-size:1.05rem;color:#444;font-weight:600;border-left:3px solid var(--accent);padding-left:0.75rem;margin-bottom:1.25rem;"></p>
+    <div id="adminModalContent" style="font-size:0.95rem;color:#333;line-height:1.7;margin-bottom:1.5rem;"></div>
+    <div style="text-align:right;">
+      <button class="btn btn-secondary" onclick="closeAdminModal()">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -230,7 +253,8 @@
           <div class="news-admin-card-footer">
             <span class="badge ${CATEGORY_BADGES[a.categorie] || 'badge-paroisse'}">${CATEGORY_LABELS[a.categorie] || a.categorie}</span>
             <div class="card-actions">
-              <a href="/actualite-detail.html?id=${a.id}" target="_blank" class="btn btn-secondary btn-sm" title="Voir l'article en ligne"><i class="fas fa-external-link-alt"></i></a>
+              <button class="btn btn-secondary btn-sm" onclick="previewActualite(${a.id})" title="Lire l'article complet"><i class="fas fa-eye"></i> Lire</button>
+              <a href="/actualite-detail.html?id=${a.id}" target="_blank" class="btn btn-secondary btn-sm" title="Voir sur le site public"><i class="fas fa-external-link-alt"></i></a>
               <button class="btn btn-secondary btn-sm" onclick="editActualite(${a.id})" title="Modifier"><i class="fas fa-edit"></i></button>
               <button class="btn btn-danger btn-sm" onclick="deleteActualite(${a.id})" title="Supprimer"><i class="fas fa-trash"></i></button>
             </div>
@@ -262,6 +286,7 @@
   function resetForm() {
     document.getElementById('actualiteForm').reset();
     document.getElementById('editId').value = '';
+    document.getElementById('date_publication').value = '';
     document.getElementById('formTitle').textContent = 'Nouvelle actualité';
     document.getElementById('imgPreview').style.display = 'none';
   }
@@ -272,6 +297,7 @@
     document.getElementById('editId').value = a.id;
     document.getElementById('titre').value = a.titre;
     document.getElementById('categorie').value = a.categorie;
+    document.getElementById('date_publication').value = a.date_publication || '';
     document.getElementById('chapeau').value = a.chapeau || '';
     document.getElementById('contenu').value = a.contenu || '';
     document.getElementById('imageNom').value = a.image || '';
@@ -283,6 +309,36 @@
     }
     document.getElementById('formCard').style.display = 'block';
     document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function previewActualite(id) {
+    const a = actualites.find(x => x.id === id);
+    if (!a) return;
+    const modal = document.getElementById('adminArticleModal');
+    document.getElementById('adminModalTitle').textContent = a.titre;
+    document.getElementById('adminModalBadge').textContent = CATEGORY_LABELS[a.categorie] || a.categorie;
+    document.getElementById('adminModalDate').textContent = a.date_publication || '';
+    document.getElementById('adminModalChapeau').textContent = a.chapeau || '';
+    document.getElementById('adminModalChapeau').style.display = a.chapeau ? 'block' : 'none';
+
+    const rawText = a.contenu || a.chapeau || 'Aucun contenu supplémentaire disponible.';
+    document.getElementById('adminModalContent').innerHTML = rawText
+      .split(/\n\s*\n/)
+      .map(p => `<p style="margin-bottom:1rem;">${p.replace(/\n/g, '<br>')}</p>`)
+      .join('');
+
+    const imgWrap = document.getElementById('adminModalImage');
+    if (a.image) {
+      imgWrap.innerHTML = `<img src="/img/${a.image}" style="max-width:100%;max-height:260px;border-radius:8px;object-fit:cover;">`;
+    } else {
+      imgWrap.innerHTML = '';
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminArticleModal').style.display = 'none';
   }
 
   async function deleteActualite(id) {
@@ -298,6 +354,7 @@
     const formData = new FormData();
     formData.append('titre', document.getElementById('titre').value);
     formData.append('categorie', document.getElementById('categorie').value);
+    formData.append('date_publication', document.getElementById('date_publication').value);
     formData.append('chapeau', document.getElementById('chapeau').value);
     formData.append('contenu', document.getElementById('contenu').value);
     const file = document.getElementById('imageFile').files[0];

@@ -583,7 +583,7 @@ async function loadActualitesAccueil() {
           <span class="news-category">${LABELS[a.categorie] || a.categorie}</span>
           <h3>${a.titre}</h3>
           <p>${a.chapeau || ''}</p>
-          <a href="actualite-detail.html?id=${a.id}" class="read-more">Lire la suite →</a>
+          <a href="actualite-detail.html?id=${a.id}" class="read-more" onclick="openArticleModal(event, ${a.id})">Lire la suite →</a>
         </div>
       </div>
     `).join('');
@@ -671,7 +671,7 @@ async function loadActualitesPage() {
           <p class="news-date"><i class="far fa-calendar-alt" aria-hidden="true"></i> ${a.date_publication || ''}</p>
           <h3>${a.titre}</h3>
           <p>${a.chapeau || a.contenu || ''}</p>
-          <a href="actualite-detail.html?id=${a.id}" class="read-more">Lire la suite →</a>
+          <a href="actualite-detail.html?id=${a.id}" class="read-more" onclick="openArticleModal(event, ${a.id})">Lire la suite →</a>
         </div>
       </div>
     `).join('');
@@ -744,6 +744,131 @@ const FALLBACK_ARTICLES = {
     image: "Adoration.jpg",
     chapeau: "Chaque mercredi, venez passer un temps d'adoration auprès du Saint-Sacrement.",
     contenu: "Le Saint-Sacrement est exposé chaque mercredi dans notre église paroissiale pour un temps privilégié de silence, de louange et de prière personnelle.\n\nPrendre un temps devant le Christ présent dans l'Eucharistie est une source incomparable de paix, de ressourcement et de renouveau spirituel au milieu de nos semaines chargées.\n\nLes prêtres sont également disponibles pendant ce temps pour le sacrement de Réconciliation (Confession) et l'écoute spirituelle."
+  }
+};
+
+// ==============================
+// MODALE INTERACTIVE D'ACTUALITÉ
+// ==============================
+function initArticleModal() {
+  if (document.getElementById('article-modal')) return;
+  const modalHtml = `
+    <div id="article-modal" class="article-modal" role="dialog" aria-modal="true" style="display:none">
+      <div class="article-modal-backdrop" onclick="closeArticleModal()"></div>
+      <div class="article-modal-container">
+        <button class="article-modal-close" onclick="closeArticleModal()" aria-label="Fermer la modale">&times;</button>
+        <div class="article-modal-scroll">
+          <div id="modal-article-image-wrap" class="article-modal-image-wrap">
+            <img id="modal-article-image" src="" alt="">
+          </div>
+          <div class="article-modal-body">
+            <div class="article-modal-meta">
+              <span id="modal-article-category" class="news-category"></span>
+              <span id="modal-article-date" class="news-date"></span>
+            </div>
+            <h2 id="modal-article-title" class="article-modal-title"></h2>
+            <p id="modal-article-chapeau" class="article-modal-chapeau"></p>
+            <div id="modal-article-content" class="article-modal-content"></div>
+            <div class="article-modal-footer">
+              <a id="modal-article-link" href="#" class="btn btn-outline-primary" style="text-decoration:none;"><i class="fas fa-external-link-alt"></i> Ouvrir sur une page dédiée</a>
+              <div style="display:flex;gap:0.5rem;align-items:center;">
+                <a id="modal-share-wa" href="#" target="_blank" class="btn btn-sm" style="background:#25D366;color:white;text-decoration:none;"><i class="fab fa-whatsapp"></i> Partager</a>
+                <button type="button" class="btn btn-secondary" onclick="closeArticleModal()">Fermer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeArticleModal();
+  });
+}
+
+window.openArticleModal = async function(e, articleId) {
+  if (e && e.preventDefault) e.preventDefault();
+  initArticleModal();
+
+  const modal = document.getElementById('article-modal');
+  const title = document.getElementById('modal-article-title');
+  const date = document.getElementById('modal-article-date');
+  const cat = document.getElementById('modal-article-category');
+  const imgWrap = document.getElementById('modal-article-image-wrap');
+  const img = document.getElementById('modal-article-image');
+  const chapeau = document.getElementById('modal-article-chapeau');
+  const content = document.getElementById('modal-article-content');
+  const link = document.getElementById('modal-article-link');
+  const shareWa = document.getElementById('modal-share-wa');
+
+  const LABELS = {
+    'vie-paroissiale': 'Vie paroissiale',
+    'projets': 'Projets',
+    'jeunes': 'Jeunes',
+    'chorale': 'Chorales'
+  };
+
+  let article = null;
+  try {
+    const res = await fetch(`${API_BASE}/api/actualites/${articleId}`);
+    if (res.ok) article = await res.json();
+  } catch (err) { /* repli statique ci-dessous */ }
+
+  if (!article) {
+    article = FALLBACK_ARTICLES[String(articleId)] || FALLBACK_ARTICLES['1'];
+  }
+
+  if (article) {
+    title.textContent = article.titre;
+    date.innerHTML = `<i class="far fa-calendar-alt"></i> ${article.date_publication || 'Paroisse Saint-Benoît'}`;
+    cat.textContent = LABELS[article.categorie] || article.categorie;
+
+    if (article.image) {
+      img.src = `img/${article.image}`;
+      img.alt = article.titre;
+      img.onerror = function() { this.src = 'img/og-image.jpg'; };
+      imgWrap.style.display = 'block';
+    } else {
+      imgWrap.style.display = 'none';
+    }
+
+    if (article.chapeau) {
+      chapeau.textContent = article.chapeau;
+      chapeau.style.display = 'block';
+    } else {
+      chapeau.style.display = 'none';
+    }
+
+    const rawText = article.contenu || article.chapeau || 'Aucun contenu supplémentaire disponible.';
+    const paragraphs = rawText
+      .split(/\n\s*\n/)
+      .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+      .join('');
+    content.innerHTML = paragraphs;
+
+    const detailUrl = `actualite-detail.html?id=${article.id || articleId}`;
+    if (link) link.href = detailUrl;
+    if (shareWa) {
+      const shareText = encodeURIComponent(`${article.titre} — Paroisse Saint-Benoît`);
+      shareWa.href = `https://api.whatsapp.com/send?text=${shareText}%20${encodeURIComponent(window.location.origin + '/' + detailUrl)}`;
+    }
+
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => modal.classList.add('active'));
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+window.closeArticleModal = function() {
+  const modal = document.getElementById('article-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }, 300);
   }
 };
 
