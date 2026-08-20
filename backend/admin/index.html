@@ -66,8 +66,9 @@
   <div class="sidebar-brand"><i class="fas fa-church"></i><span>Saint-Benoît Admin</span></div>
   <nav class="sidebar-nav">
     <div class="nav-item"><a href="/admin/" class="active"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
-    <div class="nav-section">Liturgie</div>
+    <div class="nav-section">Liturgie & Pastorale</div>
     <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
+    <div class="nav-item"><a href="/admin/services.html"><i class="fas fa-church"></i> Services</a></div>
     <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
     <div class="nav-section">Contenu</div>
     <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
@@ -94,16 +95,17 @@
 
   <div class="stats-grid">
     <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-clock"></i></div><div class="stat-info"><span>Messes</span><strong id="countMesses">—</strong></div></div>
+    <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-church"></i></div><div class="stat-info"><span>Services</span><strong id="countServices">—</strong></div></div>
     <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-newspaper"></i></div><div class="stat-info"><span>Actualités</span><strong id="countActualites">—</strong></div></div>
     <div class="stat-card"><div class="stat-icon green"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><span>Événements</span><strong id="countEvenements">—</strong></div></div>
     <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-hands-praying"></i></div><div class="stat-info"><span>Mouvements</span><strong id="countMouvements">—</strong></div></div>
     <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-users"></i></div><div class="stat-info"><span>Équipe</span><strong id="countEquipe">—</strong></div></div>
-    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-quote-left"></i></div><div class="stat-info"><span>Témoignages</span><strong id="countTemos">—</strong></div></div>
   </div>
 
   <p class="section-title">Accès rapide</p>
   <div class="actions-grid">
     <a href="/admin/messes.html" class="action-card"><div class="card-header"><i class="fas fa-clock"></i><h3>Horaires des messes</h3></div><p>Modifiez les jours, heures et types de messes.</p><div class="arrow">Accéder →</div></a>
+    <a href="/admin/services.html" class="action-card"><div class="card-header"><i class="fas fa-church"></i><h3>Services</h3></div><p>Gérez les sacrements, catéchèse et services pastoraux.</p><div class="arrow">Accéder →</div></a>
     <a href="/admin/actualites.html" class="action-card"><div class="card-header"><i class="fas fa-newspaper"></i><h3>Actualités</h3></div><p>Publiez et modifiez les articles de la communauté.</p><div class="arrow">Accéder →</div></a>
     <a href="/admin/evenements.html" class="action-card"><div class="card-header"><i class="fas fa-calendar-alt"></i><h3>Événements</h3></div><p>Gérez le calendrier liturgique et les temps forts.</p><div class="arrow">Accéder →</div></a>
     <a href="/admin/mouvements.html" class="action-card"><div class="card-header"><i class="fas fa-hands-praying"></i><h3>Mouvements</h3></div><p>Mettez à jour les groupes, chorales et services.</p><div class="arrow">Accéder →</div></a>
@@ -128,15 +130,16 @@
   document.getElementById('logoutBtn').addEventListener('click',async()=>{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='/admin/login.html'});
 
   async function loadStats(){
-    const [messes,actualites,evenements,mouvements,equipe,temos]=await Promise.all([
+    const [messes,services,actualites,evenements,mouvements,equipe]=await Promise.all([
       fetch('/api/messes',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/services',{credentials:'include'}).then(r=>r.json()),
       fetch('/api/actualites',{credentials:'include'}).then(r=>r.json()),
       fetch('/api/evenements',{credentials:'include'}).then(r=>r.json()),
       fetch('/api/mouvements',{credentials:'include'}).then(r=>r.json()),
-      fetch('/api/equipe',{credentials:'include'}).then(r=>r.json()),
-      fetch('/api/temoignages',{credentials:'include'}).then(r=>r.json())
+      fetch('/api/equipe',{credentials:'include'}).then(r=>r.json())
     ]);
     document.getElementById('countMesses').textContent=messes.length;
+    document.getElementById('countServices').textContent=services.length;
     document.getElementById('countActualites').textContent=actualites.length;
     document.getElementById('countEvenements').textContent=evenements.length;
     document.getElementById('countMouvements').textContent=mouvements.length;

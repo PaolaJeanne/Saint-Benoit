@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Événements — Admin Saint-Benoît</title>
+  <title>Services — Admin Saint-Benoît</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,16 +15,16 @@
     }
     body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
 
-    .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--primary); color: white; display: flex; flex-direction: column; z-index: 100; }
-    .sidebar-brand { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 0.75rem; }
+    .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--primary); color: white; display: flex; flex-direction: column; z-index: 100; overflow-y: auto; }
+    .sidebar-brand { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
     .sidebar-brand i { font-size: 1.5rem; color: var(--accent); }
     .sidebar-brand span { font-size: 1rem; font-weight: 700; }
     .sidebar-nav { flex: 1; padding: 1rem 0; }
+    .nav-section { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); padding: 0.85rem 1.5rem 0.35rem; }
     .nav-item a { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: rgba(255,255,255,0.7); text-decoration: none; transition: all 0.2s; font-size: 0.9rem; }
     .nav-item a:hover, .nav-item a.active { background: rgba(201,162,39,0.15); color: var(--accent); border-right: 3px solid var(--accent); }
-    .nav-section{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);padding:.85rem 1.5rem .35rem}
     .nav-item a i { width: 18px; text-align: center; }
-    .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
     .btn-logout { width: 100%; padding: 0.6rem; background: rgba(231,76,60,0.15); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s; }
     .btn-logout:hover { background: rgba(231,76,60,0.3); }
 
@@ -50,17 +50,19 @@
     input:focus, select:focus, textarea:focus { border-color: var(--accent); }
     textarea { resize: vertical; min-height: 100px; }
     .form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+    .icon-hint { font-size: 0.75rem; color: var(--gray); margin-top: 0.2rem; }
 
-    /* Events grid */
-    .events-admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-    .event-admin-card { background: var(--white); border-radius: 12px; box-shadow: var(--shadow); padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
-    .event-icon-row { display: flex; align-items: center; gap: 0.75rem; }
-    .event-icon-wrap { width: 48px; height: 48px; border-radius: 12px; background: rgba(201,162,39,0.12); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
-    .event-admin-card h3 { font-size: 1rem; font-weight: 600; }
-    .event-admin-card .event-date { font-size: 0.82rem; color: var(--accent); font-weight: 600; }
-    .event-admin-card .event-desc { font-size: 0.85rem; color: var(--gray); line-height: 1.5; }
-    .event-admin-card .event-lieu { font-size: 0.82rem; color: var(--gray); display: flex; align-items: center; gap: 0.35rem; }
-    .event-card-actions { display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    /* Services Grid */
+    .services-admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .service-admin-card { background: var(--white); border-radius: 12px; box-shadow: var(--shadow); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); transition: transform 0.2s; }
+    .service-admin-card:hover { transform: translateY(-2px); }
+    .service-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .service-icon-box { width: 50px; height: 50px; border-radius: 10px; background: rgba(201,162,39,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+    .service-title-box h3 { font-size: 1.05rem; font-weight: 600; color: var(--primary); }
+    .service-title-box span { font-size: 0.75rem; color: var(--gray); }
+    .service-admin-card p { font-size: 0.88rem; color: var(--gray); line-height: 1.6; margin-bottom: 1.25rem; flex-grow: 1; }
+    .service-card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .card-actions { display: flex; gap: 0.4rem; }
 
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
     .section-header h2 { font-size: 1rem; font-weight: 600; color: var(--primary); }
@@ -73,8 +75,6 @@
     .empty-state { padding: 3rem; text-align: center; color: var(--gray); }
     .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4; display: block; }
 
-    .icon-hint { font-size: 0.78rem; color: var(--gray); margin-top: 0.25rem; }
-
     @media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 1rem; } }
   </style>
 </head>
@@ -86,8 +86,8 @@
     <div class="nav-item"><a href="/admin/"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></div>
     <div class="nav-section">Liturgie & Pastorale</div>
     <div class="nav-item"><a href="/admin/messes.html"><i class="fas fa-clock"></i> Horaires des messes</a></div>
-    <div class="nav-item"><a href="/admin/services.html"><i class="fas fa-church"></i> Services</a></div>
-    <div class="nav-item"><a href="/admin/evenements.html" class="active"><i class="fas fa-calendar-alt"></i> Événements</a></div>
+    <div class="nav-item"><a href="/admin/services.html" class="active"><i class="fas fa-church"></i> Services</a></div>
+    <div class="nav-item"><a href="/admin/evenements.html"><i class="fas fa-calendar-alt"></i> Événements</a></div>
     <div class="nav-section">Contenu</div>
     <div class="nav-item"><a href="/admin/actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></div>
     <div class="nav-item"><a href="/admin/mouvements.html"><i class="fas fa-hands-praying"></i> Mouvements</a></div>
@@ -104,39 +104,33 @@
 
 <main class="main">
   <div class="page-header">
-    <h1><i class="fas fa-calendar-alt" style="color:var(--accent)"></i> Événements</h1>
-    <button class="btn btn-primary" id="showFormBtn"><i class="fas fa-plus"></i> Nouvel événement</button>
+    <h1><i class="fas fa-church" style="color:var(--accent)"></i> Services Liturgiques &amp; Pastoraux</h1>
+    <button class="btn btn-primary" id="showFormBtn"><i class="fas fa-plus"></i> Nouveau service</button>
   </div>
 
-  <!-- Formulaire -->
+  <!-- Formulaire d'ajout / modification -->
   <div class="form-card" id="formCard" style="display:none">
-    <h2 id="formTitle">Nouvel événement</h2>
-    <form id="evenementForm">
+    <h2 id="formTitle">Nouveau service</h2>
+    <form id="serviceForm">
       <input type="hidden" id="editId">
       <div class="form-grid">
         <div class="form-group">
-          <label>Titre *</label>
-          <input type="text" id="titre" placeholder="Nom de l'événement" required>
-        </div>
-        <div class="form-group">
-          <label>Date / Période</label>
-          <input type="text" id="date_debut" placeholder="Ex : 11 Juillet, Semaine Sainte...">
-        </div>
-      </div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Lieu</label>
-          <input type="text" id="lieu" placeholder="Ex : Église paroissiale">
+          <label>Titre du service *</label>
+          <input type="text" id="titre" placeholder="Ex : Sacrements, Catéchèse, Solidarité..." required>
         </div>
         <div class="form-group">
           <label>Icône Font Awesome</label>
-          <input type="text" id="icone" placeholder="Ex : fa-church">
-          <p class="icon-hint">Exemples : fa-church, fa-cross, fa-star, fa-calendar, fa-music, fa-pray</p>
+          <input type="text" id="icone" placeholder="Ex : fa-hands-praying, fa-cross, fa-heart">
+          <p class="icon-hint">Exemples : fa-hands-praying, fa-graduation-cap, fa-music, fa-heart, fa-church, fa-book-bible</p>
+        </div>
+        <div class="form-group">
+          <label>Ordre d'affichage</label>
+          <input type="number" id="ordre" value="0" min="0">
         </div>
       </div>
       <div class="form-group">
-        <label>Description</label>
-        <textarea id="description" placeholder="Décrivez l'événement..."></textarea>
+        <label>Description du service</label>
+        <textarea id="description" placeholder="Présentation du service, démarches et accompagnement proposé aux fidèles..."></textarea>
       </div>
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
@@ -145,14 +139,15 @@
     </form>
   </div>
 
-  <!-- Grille événements -->
+  <!-- Liste des services -->
   <div class="section-header">
-    <h2>Calendrier des événements</h2>
+    <h2>Services enregistrés</h2>
     <span id="count" style="font-size:0.85rem;color:var(--gray)"></span>
   </div>
-  <div class="events-admin-grid" id="evenementsGrid">
+  <div class="services-admin-grid" id="servicesGrid">
     <div class="empty-state" style="grid-column:1/-1">
-      <i class="fas fa-spinner fa-spin"></i><p>Chargement...</p>
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement des services...</p>
     </div>
   </div>
 </main>
@@ -172,42 +167,48 @@
   function showToast(msg, type = 'success') {
     const t = document.getElementById('toast');
     t.textContent = msg;
-    t.className = `toast ${type} show`;
+    t.className = 	oast  show;
     setTimeout(() => t.classList.remove('show'), 3500);
   }
 
-  let evenements = [];
+  let services = [];
 
-  async function loadEvenements() {
-    const res = await fetch('/api/evenements', { credentials: 'include' });
-    evenements = await res.json();
-    renderGrid();
+  async function loadServices() {
+    try {
+      const res = await fetch('/api/services', { credentials: 'include' });
+      services = await res.json();
+      renderGrid();
+    } catch (err) {
+      showToast('Erreur lors du chargement des services.', 'error');
+    }
   }
 
   function renderGrid() {
-    const grid = document.getElementById('evenementsGrid');
-    document.getElementById('count').textContent = `${evenements.length} événement(s)`;
-    if (evenements.length === 0) {
-      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-calendar-alt"></i><p>Aucun événement. Ajoutez le premier !</p></div>';
+    const grid = document.getElementById('servicesGrid');
+    document.getElementById('count').textContent = ${services.length} service(s);
+    if (services.length === 0) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-church"></i><p>Aucun service enregistré. Ajoutez votre premier service !</p></div>';
       return;
     }
-    grid.innerHTML = evenements.map(ev => `
-      <div class="event-admin-card">
-        <div class="event-icon-row">
-          <div class="event-icon-wrap"><i class="fas ${ev.icone || 'fa-calendar'}"></i></div>
-          <div>
-            <h3>${ev.titre}</h3>
-            <div class="event-date"><i class="far fa-calendar-alt"></i> ${ev.date_debut || 'Date non définie'}</div>
+    grid.innerHTML = services.map(s => 
+      <div class="service-admin-card">
+        <div class="service-header">
+          <div class="service-icon-box"><i class="fas "></i></div>
+          <div class="service-title-box">
+            <h3></h3>
+            <span>Ordre : </span>
           </div>
         </div>
-        ${ev.description ? `<p class="event-desc">${ev.description}</p>` : ''}
-        ${ev.lieu ? `<p class="event-lieu"><i class="fas fa-map-marker-alt"></i> ${ev.lieu}</p>` : ''}
-        <div class="event-card-actions">
-          <button class="btn btn-secondary btn-sm" onclick="editEvenement(${ev.id})"><i class="fas fa-edit"></i> Modifier</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteEvenement(${ev.id})"><i class="fas fa-trash"></i></button>
+        <p></p>
+        <div class="service-card-footer">
+          <span style="font-size:0.75rem;color:var(--gray)"><i class="fas fa-tag"></i> <code></code></span>
+          <div class="card-actions">
+            <button class="btn btn-secondary btn-sm" onclick="editService()" title="Modifier"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="deleteService()" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
         </div>
       </div>
-    `).join('');
+    ).join('');
   }
 
   document.getElementById('showFormBtn').addEventListener('click', () => {
@@ -215,67 +216,73 @@
     document.getElementById('formCard').style.display = 'block';
     document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
   });
+
   document.getElementById('cancelBtn').addEventListener('click', () => {
     document.getElementById('formCard').style.display = 'none';
     resetForm();
   });
 
   function resetForm() {
-    document.getElementById('evenementForm').reset();
+    document.getElementById('serviceForm').reset();
     document.getElementById('editId').value = '';
-    document.getElementById('formTitle').textContent = 'Nouvel événement';
-    document.getElementById('icone').value = 'fa-calendar';
+    document.getElementById('ordre').value = '0';
+    document.getElementById('formTitle').textContent = 'Nouveau service';
   }
 
-  function editEvenement(id) {
-    const ev = evenements.find(x => x.id === id);
-    if (!ev) return;
-    document.getElementById('editId').value = ev.id;
-    document.getElementById('titre').value = ev.titre;
-    document.getElementById('date_debut').value = ev.date_debut || '';
-    document.getElementById('lieu').value = ev.lieu || '';
-    document.getElementById('icone').value = ev.icone || 'fa-calendar';
-    document.getElementById('description').value = ev.description || '';
-    document.getElementById('formTitle').textContent = 'Modifier l\'événement';
+  function editService(id) {
+    const s = services.find(x => x.id === id);
+    if (!s) return;
+    document.getElementById('editId').value = s.id;
+    document.getElementById('titre').value = s.titre;
+    document.getElementById('icone').value = s.icone || 'fa-church';
+    document.getElementById('ordre').value = s.ordre || 0;
+    document.getElementById('description').value = s.description || '';
+    document.getElementById('formTitle').textContent = 'Modifier le service';
     document.getElementById('formCard').style.display = 'block';
     document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
   }
 
-  async function deleteEvenement(id) {
-    if (!confirm('Supprimer cet événement ?')) return;
-    const res = await fetch(`/api/evenements/${id}`, { method: 'DELETE', credentials: 'include' });
-    if (res.ok) { showToast('Événement supprimé.'); loadEvenements(); }
-    else showToast('Erreur lors de la suppression.', 'error');
+  async function deleteService(id) {
+    if (!confirm('Supprimer ce service ?')) return;
+    const res = await fetch(/api/services/, { method: 'DELETE', credentials: 'include' });
+    if (res.ok) {
+      showToast('Service supprimé avec succès.');
+      loadServices();
+    } else {
+      showToast('Erreur lors de la suppression.', 'error');
+    }
   }
 
-  document.getElementById('evenementForm').addEventListener('submit', async function(e) {
+  document.getElementById('serviceForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const id = document.getElementById('editId').value;
-    const payload = {
+    const data = {
       titre: document.getElementById('titre').value,
-      date_debut: document.getElementById('date_debut').value,
-      lieu: document.getElementById('lieu').value,
-      icone: document.getElementById('icone').value || 'fa-calendar',
+      icone: document.getElementById('icone').value || 'fa-church',
+      ordre: parseInt(document.getElementById('ordre').value) || 0,
       description: document.getElementById('description').value
     };
-    const url = id ? `/api/evenements/${id}` : '/api/evenements';
+
+    const url = id ? /api/services/ : '/api/services';
     const method = id ? 'PUT' : 'POST';
     const res = await fetch(url, {
-      method, credentials: 'include',
+      method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      credentials: 'include',
+      body: JSON.stringify(data)
     });
+
     if (res.ok) {
-      showToast(id ? 'Événement mis à jour !' : 'Événement créé !');
+      showToast(id ? 'Service mis à jour !' : 'Service ajouté !');
       document.getElementById('formCard').style.display = 'none';
       resetForm();
-      loadEvenements();
-    } else showToast('Erreur lors de l\'enregistrement.', 'error');
+      loadServices();
+    } else {
+      showToast('Erreur lors de l\'enregistrement.', 'error');
+    }
   });
 
-  loadEvenements();
+  loadServices();
 </script>
 </body>
 </html>
-
-
